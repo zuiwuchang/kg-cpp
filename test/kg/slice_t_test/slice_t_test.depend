@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1496220720 source:/home/king/program/lib/c++/kg-cpp/test/kg/slice_t_test/main.cpp
+	<gtest/gtest.h>
+	<kg/slice.hpp>
+
