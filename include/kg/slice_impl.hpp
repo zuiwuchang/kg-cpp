@@ -1,20 +1,51 @@
 #ifndef KG_SLICE_IMPL_HEADER_HPP
 
+#include "define.hpp"
 #include "allocator.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/smart_ptr.hpp>
 namespace kg
 {
+	/**
+	*	\brief	slice_t 的實現代碼
+	*
+	*	\param	T	切片保存的數據 型別
+	*	\param	Alloc	定義了如何 向os 申請釋放內存
+	*
+	*	\warning	請使用 slice_t 不要直接使用 slice_impl
+	*/
 	template<typename T,typename Alloc>
 	class slice_impl:boost::noncopyable
 	{
-	protected:
+	public:
+		//type_t type_spt
+		KG_TYPEDEF_TT(slice_impl)
+	private:
+		/**
+		*	\brief	slice_impl 數據模型
+		*
+		*/
 		class array_t
 		{
 		public:
+			/**
+			*	\brief	內存分片器
+			*
+			*/
 			Alloc _alloc;
+			/**
+			*	\brief	內存地址 指針
+			*
+			*/
 			T* _p;
-			array_t(const std::size_t size)
+
+			/**
+			*	\brief	內存數組 大小
+			*
+			*/
+			std::size_t _size;
+
+			array_t(const std::size_t size):_size(size)
 			{
 				_p = _alloc.create_array(size);
 			}
@@ -26,14 +57,37 @@ namespace kg
 				}
 			}
 		};
-		typedef T type;
 
-	public:
+		/**
+		*	\brief	slice_impl 數據模型
+		*
+		*/
 		boost::shared_ptr<array_t> _array;
+		/**
+		*	\brief	容量
+		*
+		*/
 		std::size_t _capacity;
+		/**
+		*	\brief	大小
+		*
+		*/
 		std::size_t _size;
+		/**
+		*	\brief	偏移
+		*
+		*/
 		std::size_t _pos;
 	public:
+		/**
+		*	\brief	構造 slice_impl
+		*
+		*	\exception	std::bad_alloc
+		*
+		*	\param	size	切片大小
+		*	\param	capacity	切片容量
+		*
+		*/
 		slice_impl(const std::size_t size=0,std::size_t capacity=0)
 			:_pos(0)
 		{
@@ -54,19 +108,129 @@ namespace kg
 
 		}
 
+		/**
+		*   \brief  返回切片 大小
+		*
+		*/
 		inline std::size_t size()const
 		{
 			return _size;
 		}
+
+		/**
+		*   \brief  返回切片 容量
+		*
+		*/
 		inline std::size_t capacity()const
 		{
 			return _capacity;
 		}
 
+		/**
+		*   \brief  返回 兩個 切片是否 一樣
+		*
+		*	\param	l	待比較的切片
+		*	\param	r	待比較的切片
+		*
+		*	\return	如果一樣 返回 true
+		*/
+		static bool equal(const slice_impl& l,const slice_impl& r)
+		{
+			return l._array == r._array &&
+				//m1->_capacity == m2->_capacity &&
+				l._size == r._size &&
+				l._pos == r._pos
+				;
+		}
+
+		/**
+		*   \brief  切取 切片
+		*
+		*	\exception	std::bad_alloc
+		*	\exception	std::out_of_range
+		*
+		*	\param	slice 被切取 的原切片
+		*	\param	begin 切取位置 必須是 [0,size]
+		*
+		*	\return	子切片的 impl 智能指針
+		*/
+		static type_spt range(const slice_impl& slice,std::size_t begin)
+		{
+			std::size_t size = slice._size;
+			if(begin > size)
+			{
+				throw std::out_of_range("kg::slice_t.range begin > this->size()");
+			}
+
+			type_spt impl = boost::make_shared<type_t>();
+			impl->_array = slice._array;
+			impl->_pos = slice._pos + begin;
+			impl->_size = size - begin;
+			impl->_capacity = slice._capacity - begin;
+
+			return impl;
+		}
+		/**
+		*   \brief  切取 切片
+		*
+		*	\exception	std::bad_alloc
+		*	\exception	std::out_of_range
+		*
+		*	\param	slice 被切取 的原切片
+		*	\param	begin 切取位置 必須是 [0,capacity]
+		*	\param	end 切取位置 必須是 [0,capacity]
+		*
+		*	\return	子切片
+		*
+		*	\attention	在傳入 end 時 允許 begin 取 (size,capacity] 之間的 值
+		*	\attention	如果 end <= begin 子切片 的size 爲0
+		*
+		*/
+		static type_spt range(const slice_impl& slice,std::size_t begin,std::size_t end)
+		{
+			std::size_t capacity = slice._capacity;
+			if(begin > capacity)
+			{
+				throw std::out_of_range("kg::slice_t.range begin > this->capacity()");
+			}
+			if(end > capacity)
+			{
+				end = capacity;
+			}
+			capacity -= begin;
+			std::size_t pos = slice._pos;
+			pos += begin;
+
+			std::size_t size = 0;
+			if(begin < end)
+			{
+				size = end - begin;
+			}
+
+			type_spt impl = boost::make_shared<type_t>();
+			impl->_array = slice._array;
+			impl->_pos = pos;
+			impl->_size = size;
+			impl->_capacity = capacity;
+			return impl;
+		}
+		/**
+		*   \brief  訪問切片 元素
+		*
+		*	\attention	如 標註庫一樣 不會 檢查 越界
+		*
+		*/
 		inline T& operator[](const std::size_t i)
 		{
 			return (_array->_p)[i + _pos];
 		}
+
+		/**
+		*   \brief  訪問切片 元素
+		*
+		*	\exception std::out_of_range
+		*
+		*/
 		T& at(std::size_t i)
 		{
 			if(i >= _size)
@@ -76,10 +240,24 @@ namespace kg
 			i += _pos;
 			return (_array->_p)[i];
 		}
+
+		/**
+		*   \brief  訪問切片 元素
+		*
+		*	\attention	如 標註庫一樣 不會 檢查 越界
+		*
+		*/
 		inline const T& operator[](const std::size_t i)const
 		{
 			return (_array->_p)[i + _pos];
 		}
+
+		/**
+		*   \brief  訪問切片 元素
+		*
+		*	\exception std::out_of_range
+		*
+		*/
 		const T& at(std::size_t i)const
 		{
 			if(i >= _size)
@@ -90,6 +268,10 @@ namespace kg
 			return (_array->_p)[i];
 		}
 
+		/**
+		*   \brief  返回 正向迭代器 begin
+		*
+		*/
 		T* begin()
 		{
 			if(_size)
@@ -98,6 +280,11 @@ namespace kg
 			}
 			return 0;
 		}
+
+		/**
+		*   \brief  返回 正向迭代器 end
+		*
+		*/
 		T* end()
 		{
 			if(_size)
@@ -106,6 +293,11 @@ namespace kg
 			}
 			return 0;
 		}
+
+		/**
+		*   \brief  返回 正向 const 迭代器 begin
+		*
+		*/
 		const T* begin()const
 		{
 			if(_size)
@@ -114,6 +306,11 @@ namespace kg
 			}
 			return 0;
 		}
+
+		/**
+		*   \brief  返回 正向 const 迭代器 end
+		*
+		*/
 		const T* end()const
 		{
 			if(_size)
@@ -122,9 +319,6 @@ namespace kg
 			}
 			return 0;
 		}
-
-		class slice_t;
-		friend class slice_t;
 	};
 };
 #endif // KG_SLICE_IMPL_HEADER_HPP

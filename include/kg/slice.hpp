@@ -8,19 +8,23 @@ namespace kg
 	/**
 	*	\brief	如同 go 的 slice
 	*
+	*	\attention	slice 保存的元素 必須符合 copy 語義 這就和 標準stl 容器一樣
+	*
 	*	\param	T	切片保存的數據 型別
 	*	\param	Alloc	定義了如何 向os 申請釋放內存
 	*/
 	template<typename T,typename Alloc = allocator_t<T>>
 	class slice_t
 	{
-	protected:
-		typedef slice_impl<T,Alloc> type_t;
-		typedef boost::shared_ptr<type_t> type_spt;
+	public:
+		//type_t type_spt
+		KG_TYPEDEF_TT(slice_t)
+	private:
+		typedef slice_impl<T,Alloc> impl_t;
+		typedef typename impl_t::type_spt impl_spt;
+		impl_spt _impl;
 
-		type_spt _impl;
-	protected:
-		slice_t(type_spt impl)
+		slice_t(impl_spt impl)
 		{
 			_impl = impl;
 		}
@@ -36,27 +40,58 @@ namespace kg
 		*/
 		slice_t(const std::size_t size=0,std::size_t capacity=0)
 		{
-			_impl = boost::make_shared<type_t>(size,capacity);
+			_impl = boost::make_shared<impl_t>(size,capacity);
 		}
 		~slice_t()
 		{
 		}
 
 		/**
-		*   \brief  返回 切片是否 相等
+		*   \brief  如果go的 append
+		*
+		*	在 slice 尾添加 數據 返回添加成功後的 新slice
+		*
+		*	\exception	std::bad_alloc
+		*
+		*	\param	val	要添加的 新元素
+		*	\return	新切片
+		*
+		*	\note	如果需要重新申請內存 slice_t會自動完成 此時 返回的 新slice 和原 slice 的內存模型 將指向不同的 地址
+		*/
+		slice_t append(const T& val)
+		{
+			return slice_t();
+		}
+		/**
+		*   \brief  如果go的 append
+		*
+		*	在 slice 尾添加 數據 返回添加成功後的 新slice
+		*
+		*	\exception	std::bad_alloc
+		*
+		*	\param	val	要添加的 新元素
+		*	\return	新切片
+		*
+		*	\note	如果需要重新申請內存 slice_t會自動完成 此時 返回的 新slice 和原 slice 的內存模型 將指向不同的 地址
+		*/
+		/*slice_t append(const T& val)
+		{
+			return slice_t;
+		}*/
+
+		/**
+		*   \brief  返回 切片是否 一樣
 		*
 		*/
-		bool operator==(const slice_t& compare)const
+		inline bool operator==(const slice_t& compare)const
 		{
-			type_spt m1 = this->_impl;
-			type_spt m2 = compare._impl;
-
-			return m1->_array == m2->_array &&
-				//m1->_capacity == m2->_capacity &&
-				m1->_size == m2->_size &&
-				m1->_pos == m2->_pos
-				;
+			return impl_t::equal(*_impl,*(compare._impl));
 		}
+
+		/**
+		*   \brief  返回 切片是否 不一樣
+		*
+		*/
 		inline bool operator!=(const slice_t& compare)const
 		{
 			return !((*this) == compare);
@@ -132,26 +167,9 @@ namespace kg
 		*
 		*	\return	子切片
 		*/
-		slice_t range(std::size_t begin)const
+		inline slice_t range(std::size_t begin)const
 		{
-			std::size_t size = _impl->_size;
-			if(begin > size)
-			{
-				throw std::out_of_range("kg::slice_t.range begin > this->size()");
-			}
-			size -= begin;
-
-			std::size_t pos = _impl->_pos;
-			pos += begin;
-			std::size_t capacity = _impl->_capacity;
-			capacity -= begin;
-
-			type_spt impl = boost::make_shared<type_t>();
-			impl->_array = _impl->_array;
-			impl->_pos = pos;
-			impl->_size = size;
-			impl->_capacity = capacity;
-			return slice_t(impl);
+			return slice_t(impl_t::range(*_impl,begin));
 		}
 		/**
 		*   \brief  切取 切片
@@ -168,36 +186,12 @@ namespace kg
 		*	\attention	如果 end <= begin 子切片 的size 爲0
 		*
 		*/
-		slice_t range(std::size_t begin,std::size_t end)const
+		inline slice_t range(std::size_t begin,std::size_t end)const
 		{
-			std::size_t capacity = _impl->_capacity;
-			if(begin > capacity)
-			{
-				throw std::out_of_range("kg::slice_t.range begin > this->capacity()");
-			}
-			if(end > capacity)
-			{
-				end = capacity;
-			}
-			capacity -= begin;
-			std::size_t pos = _impl->_pos;
-			pos += begin;
-
-			std::size_t size = 0;
-			if(begin < end)
-			{
-				size = end - begin;
-			}
-
-			type_spt impl = boost::make_shared<type_t>();
-			impl->_array = _impl->_array;
-			impl->_pos = pos;
-			impl->_size = size;
-			impl->_capacity = capacity;
-			return slice_t(impl);
+			return slice_t(impl_t::range(*_impl,begin,end));
 		}
 		/**
-		*   \brief  返回 正方迭代器 begin
+		*   \brief  返回 正向迭代器 begin
 		*
 		*/
         inline T* begin()
@@ -205,7 +199,7 @@ namespace kg
         	return _impl->begin();
         }
         /**
-		*   \brief  返回 正方迭代器 end
+		*   \brief  返回 正向迭代器 end
 		*
 		*/
         inline T* end()
@@ -213,7 +207,7 @@ namespace kg
         	return _impl->end();
         }
         /**
-		*   \brief  返回 正方 const 迭代器 begin
+		*   \brief  返回 正向 const 迭代器 begin
 		*
 		*/
         inline const T* begin()const
@@ -221,7 +215,7 @@ namespace kg
         	return _impl->begin();
         }
 		/**
-		*   \brief  返回 正方 const 迭代器 end
+		*   \brief  返回 正向 const 迭代器 end
 		*
 		*/
         inline const T* end()const

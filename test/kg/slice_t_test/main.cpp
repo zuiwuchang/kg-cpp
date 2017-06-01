@@ -9,6 +9,7 @@ TEST(slice_t_range_Test, HandleNoneZeroInput)
 	EXPECT_EQ(s.size(),size);
 	EXPECT_EQ(s.capacity(),capacity);
 
+
 	//測試引用
 	slice_t quote = s;
 	std::size_t x = 0;
@@ -30,6 +31,7 @@ TEST(slice_t_range_Test, HandleNoneZeroInput)
 	//測試子 切片
 	slice_t c0 = s.range(0);
 	EXPECT_TRUE(s==c0);
+
 
 	c0 = s.range(1);
 	EXPECT_NO_THROW(s.range(size));
