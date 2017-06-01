@@ -157,10 +157,6 @@ namespace kg
 		{
 			return slice_t(impl_t::range(*_impl,begin,end));
 		}
-		/**
-		*   \brief  返回 正向迭代器 begin
-		*
-		*/
 
 		/**
 		*   \brief  如同go的 append
@@ -185,16 +181,37 @@ namespace kg
 		*
 		*	\exception	std::bad_alloc
 		*
-		*	\param	val	要添加的 新元素
+		*	\param	arrs	要添加的 數組
+		*	\param	size	數組 大小
 		*	\return	新切片
 		*
 		*	\note	如果需要重新申請內存 slice_t會自動完成 此時 返回的 新slice 和原 slice 的內存模型 將指向不同的 地址
 		*/
-		/*slice_t append(const T& val)
+		inline slice_t append(const T* arrs,const std::size_t size)
 		{
-			return slice_t;
-		}*/
+			return slice_t(impl_t::append(*_impl,arrs,size));
+		}
+		/**
+		*   \brief  如同go的 append
+		*
+		*	在 slice 尾添加 數據 返回添加成功後的 新slice
+		*
+		*	\exception	std::bad_alloc
+		*
+		*	\param	slice	要添加的 數組
+		*	\return	新切片
+		*
+		*	\note	如果需要重新申請內存 slice_t會自動完成 此時 返回的 新slice 和原 slice 的內存模型 將指向不同的 地址
+		*/
+		inline slice_t append(const slice_t& slice)
+		{
+			return slice_t(impl_t::append(*_impl,*(slice._impl)));
+		}
 
+		/**
+		*   \brief  返回 正向迭代器 begin
+		*
+		*/
         inline T* begin()
         {
         	return _impl->begin();

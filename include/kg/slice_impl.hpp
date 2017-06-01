@@ -7,7 +7,7 @@
 namespace kg
 {
 	/**
-	*	\brief	slice_t 的實現代碼
+	*	\brief	(內部使用) slice_t 的實現代碼
 	*
 	*	\param	T	切片保存的數據 型別
 	*	\param	Alloc	定義了如何 向os 申請釋放內存
@@ -265,6 +265,87 @@ namespace kg
 			return impl;
 		}
 
+		/**
+		*   \brief  如同go的 append
+		*
+		*	在 slice 尾添加 數據 返回添加成功後的 新slice
+		*
+		*	\exception	std::bad_alloc
+		*
+		*	\param	slice 被添加 的原切片
+		*	\param	arrs	要添加的 數組
+		*	\param	size	數組 大小
+		*	\return	新切片的 impl 智能指針
+		*
+		*	\note	如果需要重新申請內存 slice_t會自動完成 此時 返回的 新slice 和原 slice 的內存模型 將指向不同的 地址
+		*/
+		static type_spt append(const slice_impl& slice,const T* arrs,const std::size_t size)
+		{
+			type_spt impl = boost::make_shared<type_t>();
+			std::size_t new_size = slice._size + size;
+			if(slice._capacity >= new_size)
+			{
+				//容量充足 直接 添加
+				impl->_array = slice._array;
+				impl->_pos = slice._pos;
+				impl->_size = new_size;
+				impl->_capacity = slice._capacity;
+				if(size)
+				{
+					T* dist = impl->_array->_p;
+					std::copy(arrs,arrs+size,dist + slice._pos + slice._size);
+				}
+			}
+			else
+			{
+
+				//重新申請內存
+
+				//新內存 容量
+				std::size_t capacity = slice._capacity? slice._capacity * 2:1;
+				if(capacity < new_size)
+				{
+					capacity = new_size;
+				}
+
+				//新 內存
+				impl->_array = boost::make_shared<array_t>(capacity);
+				impl->_pos = 0;
+				impl->_size = new_size;
+				impl->_capacity = capacity;
+
+				//copy 原數據
+				T* dist = impl->_array->_p;
+				if(slice._array)
+				{
+					T* src = slice._array->_p + slice._pos;
+					std::copy(src,src + slice._size,dist);
+				}
+				std::copy(arrs,arrs+size,dist + slice._size);
+			}
+			return impl;
+		}
+		/**
+		*   \brief  如同go的 append
+		*
+		*	在 slice 尾添加 數據 返回添加成功後的 新slice
+		*
+		*	\exception	std::bad_alloc
+		*
+		*	\param	slice 被添加 的原切片
+		*	\param	slice1	要添加的 數組
+		*	\return	新切片的 impl 智能指針
+		*
+		*	\note	如果需要重新申請內存 slice_t會自動完成 此時 返回的 新slice 和原 slice 的內存模型 將指向不同的 地址
+		*/
+		static type_spt append(const slice_impl& slice,const slice_impl& slice1)
+		{
+			if(slice1._size)
+			{
+				return append(slice,slice1._array->_p + slice1._pos,slice1._size);
+			}
+			return append(slice,nullptr,0);
+		}
 		/**
 		*   \brief  訪問切片 元素
 		*

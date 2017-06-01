@@ -70,7 +70,7 @@ TEST(slice_t_range_Test, HandleNoneZeroInput)
 		EXPECT_EQ(c1[i],i);
 	}
 }
-typedef kg::slice_t<std::size_t> slice_t;
+
 TEST(slice_t_append_Test, HandleNoneZeroInput)
 {
 	//0
@@ -136,9 +136,73 @@ TEST(slice_t_append_Test, HandleNoneZeroInput)
 		EXPECT_EQ(s4[i],i+1);
 	}
 }
+TEST(slice_t_append_arrs_Test, HandleNoneZeroInput)
+{
+	slice_t s(2,10);
+	for(std::size_t i=0;i<s.size();++i)
+	{
+		s[i] = i;
+	}
+	slice_t s0(2);
+	s0[0]=2;
+	s0[1]=3;
+	s = s.append(s0);
+	EXPECT_EQ(s.size(),4);
+	EXPECT_EQ(s.capacity(),10);
+	for(std::size_t i=0;i<s.size();++i)
+	{
+		EXPECT_EQ(s[i],i);
+	}
+	slice_t s1;
+	slice_t s2 = s.append(s1);
+	EXPECT_EQ(s2,s);
+	EXPECT_EQ(s2.size(),4);
+	EXPECT_EQ(s2.capacity(),10);
+	for(std::size_t i=0;i<s.size();++i)
+	{
+		EXPECT_EQ(s2[i],i);
+	}
+
+
+	{
+		std::size_t arrs[7] = {4,5,6,7,8,9,10};
+		slice_t ss = s.append(&arrs[0],7);
+		EXPECT_EQ(s.size(),4);
+		EXPECT_EQ(s.capacity(),10);
+		for(std::size_t i=0;i<s.size();++i)
+		{
+			EXPECT_EQ(s[i],i);
+		}
+
+		EXPECT_EQ(ss.size(),11);
+		EXPECT_EQ(ss.capacity(),20);
+		for(std::size_t i=0;i<ss.size();++i)
+		{
+			EXPECT_EQ(ss[i],i);
+		}
+	}
+
+
+	{
+		std::size_t arrs[17] = {4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
+		slice_t ss = s.append(&arrs[0],17);
+		EXPECT_EQ(s.size(),4);
+		EXPECT_EQ(s.capacity(),10);
+		for(std::size_t i=0;i<s.size();++i)
+		{
+			EXPECT_EQ(s[i],i);
+		}
+
+		EXPECT_EQ(ss.size(),21);
+		EXPECT_EQ(ss.capacity(),21);
+		for(std::size_t i=0;i<ss.size();++i)
+		{
+			EXPECT_EQ(ss[i],i);
+		}
+	}
+}
 int main(int argc, char* argv[])
 {
-
 	testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }
