@@ -180,7 +180,7 @@ namespace kg
 		*	\param	begin 切取位置 必須是 [0,capacity]
 		*	\param	end 切取位置 必須是 [0,capacity]
 		*
-		*	\return	子切片
+		*	\return	子切片的 impl 智能指針
 		*
 		*	\attention	在傳入 end 時 允許 begin 取 (size,capacity] 之間的 值
 		*	\attention	如果 end <= begin 子切片 的size 爲0
@@ -197,9 +197,6 @@ namespace kg
 			{
 				end = capacity;
 			}
-			capacity -= begin;
-			std::size_t pos = slice._pos;
-			pos += begin;
 
 			std::size_t size = 0;
 			if(begin < end)
@@ -209,11 +206,65 @@ namespace kg
 
 			type_spt impl = boost::make_shared<type_t>();
 			impl->_array = slice._array;
-			impl->_pos = pos;
+			impl->_pos = slice._pos + begin;
 			impl->_size = size;
-			impl->_capacity = capacity;
+			impl->_capacity = capacity - begin;
 			return impl;
 		}
+
+		/**
+		*   \brief  如同go的 append
+		*
+		*	在 slice 尾添加 數據 返回添加成功後的 新slice
+		*
+		*	\exception	std::bad_alloc
+		*
+		*	\param	slice 被添加 的原切片
+		*	\param	val	要添加的 新元素
+		*	\return	新切片的 impl 智能指針
+		*
+		*	\note	如果需要重新申請內存 slice_t會自動完成 此時 返回的 新slice 和原 slice 的內存模型 將指向不同的 地址
+		*/
+		static type_spt append(const slice_impl& slice,const T& val)
+		{
+			type_spt impl = boost::make_shared<type_t>();
+			std::size_t size = slice._size;
+			if(slice._capacity > size)
+			{
+				//容量充足 直接 添加
+				impl->_array = slice._array;
+				impl->_pos = slice._pos;
+				impl->_size = size + 1;
+				impl->_capacity = slice._capacity;
+
+				T* dist = impl->_array->_p;
+				dist[size] = val;
+			}
+			else
+			{
+				//重新申請內存
+
+				//新內存 容量
+				std::size_t capacity = slice._capacity? slice._capacity * 2:1;
+
+				//新 內存
+				impl->_array = boost::make_shared<array_t>(capacity);
+				impl->_pos = 0;
+				impl->_size = size + 1;
+				impl->_capacity = capacity;
+
+				//copy 原數據
+				T* dist = impl->_array->_p;
+				if(slice._array)
+				{
+					T* src = slice._array->_p + slice._pos;
+					std::copy(src,src + slice._size,dist);
+				}
+				dist[size] = val;
+			}
+			return impl;
+		}
+
 		/**
 		*   \brief  訪問切片 元素
 		*

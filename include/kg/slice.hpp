@@ -47,39 +47,6 @@ namespace kg
 		}
 
 		/**
-		*   \brief  如果go的 append
-		*
-		*	在 slice 尾添加 數據 返回添加成功後的 新slice
-		*
-		*	\exception	std::bad_alloc
-		*
-		*	\param	val	要添加的 新元素
-		*	\return	新切片
-		*
-		*	\note	如果需要重新申請內存 slice_t會自動完成 此時 返回的 新slice 和原 slice 的內存模型 將指向不同的 地址
-		*/
-		slice_t append(const T& val)
-		{
-			return slice_t();
-		}
-		/**
-		*   \brief  如果go的 append
-		*
-		*	在 slice 尾添加 數據 返回添加成功後的 新slice
-		*
-		*	\exception	std::bad_alloc
-		*
-		*	\param	val	要添加的 新元素
-		*	\return	新切片
-		*
-		*	\note	如果需要重新申請內存 slice_t會自動完成 此時 返回的 新slice 和原 slice 的內存模型 將指向不同的 地址
-		*/
-		/*slice_t append(const T& val)
-		{
-			return slice_t;
-		}*/
-
-		/**
 		*   \brief  返回 切片是否 一樣
 		*
 		*/
@@ -194,6 +161,40 @@ namespace kg
 		*   \brief  返回 正向迭代器 begin
 		*
 		*/
+
+		/**
+		*   \brief  如同go的 append
+		*
+		*	在 slice 尾添加 數據 返回添加成功後的 新slice
+		*
+		*	\exception	std::bad_alloc
+		*
+		*	\param	val	要添加的 新元素
+		*	\return	新切片
+		*
+		*	\note	如果需要重新申請內存 slice_t會自動完成 此時 返回的 新slice 和原 slice 的內存模型 將指向不同的 地址
+		*/
+		inline slice_t append(const T& val)
+		{
+			return slice_t(impl_t::append(*_impl,val));
+		}
+		/**
+		*   \brief  如同go的 append
+		*
+		*	在 slice 尾添加 數據 返回添加成功後的 新slice
+		*
+		*	\exception	std::bad_alloc
+		*
+		*	\param	val	要添加的 新元素
+		*	\return	新切片
+		*
+		*	\note	如果需要重新申請內存 slice_t會自動完成 此時 返回的 新slice 和原 slice 的內存模型 將指向不同的 地址
+		*/
+		/*slice_t append(const T& val)
+		{
+			return slice_t;
+		}*/
+
         inline T* begin()
         {
         	return _impl->begin();
