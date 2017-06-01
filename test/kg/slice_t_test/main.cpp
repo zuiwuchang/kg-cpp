@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <kg/slice.hpp>
+
 typedef kg::slice_t<std::size_t> slice_t;
 TEST(slice_t_range_Test, HandleNoneZeroInput)
 {
@@ -199,8 +200,39 @@ TEST(slice_t_append_arrs_Test, HandleNoneZeroInput)
 		{
 			EXPECT_EQ(ss[i],i);
 		}
+
 	}
 }
+TEST(slice_t_copy_Test, HandleNoneZeroInput)
+{
+	slice_t s0(0,10);
+	for(std::size_t i=0;i<s0.capacity();++i)
+	{
+		s0 = s0.append(i);
+	}
+	EXPECT_EQ(s0.size(),10);
+	EXPECT_EQ(s0.capacity(),10);
+
+	slice_t s1(5,6);
+	EXPECT_EQ(s1.copy_from(s0),s1.size());
+	EXPECT_EQ(s1.size(),5);
+	EXPECT_EQ(s1.capacity(),6);
+	for(std::size_t i=0;i<s1.size();++i)
+	{
+		EXPECT_EQ(s1[i],i);
+	}
+
+	slice_t s2(12);
+	EXPECT_EQ(s2.copy_from(s0),10);
+	EXPECT_EQ(s2.size(),12);
+	EXPECT_EQ(s2.capacity(),12);
+	for(std::size_t i=0;i<s0.size();++i)
+	{
+		EXPECT_EQ(s2[i],i);
+	}
+}
+
+
 int main(int argc, char* argv[])
 {
 	testing::InitGoogleTest(&argc, argv);

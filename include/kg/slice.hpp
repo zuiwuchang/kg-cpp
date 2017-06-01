@@ -12,6 +12,44 @@ namespace kg
 	*
 	*	\param	T	切片保存的數據 型別
 	*	\param	Alloc	定義了如何 向os 申請釋放內存
+	*
+	*	\code
+typedef kg::slice_t<std::size_t> slice_t;
+void print(char* name,const slice_t& slice)
+{
+	std::cout<<name<<"=";
+	for(std::size_t v:slice)
+	{
+		std::cout<<v<<",";
+	}
+	std::cout<<std::endl;
+}
+
+int main(int argc, char* argv[])
+{
+	slice_t s0(3);
+	for(std::size_t i=0;i<s0.size();++i)
+	{
+		s0[i] = i;
+	}
+	print("s0",s0);
+
+	slice_t s1 = s0.range(1,3);
+	print("s1",s1);
+
+	s0.copy_from(s1);
+	print("s0",s0);
+
+	s1[1] = 3;
+	print("s0",s0);
+
+	return 0;
+}
+	*	\endcode
+	*	s0=0,1,2,\n
+	*	s1=1,2,\n
+	*	s0=1,2,2,\n
+	*	s0=1,2,3,\n
 	*/
 	template<typename T,typename Alloc = allocator_t<T>>
 	class slice_t
@@ -45,7 +83,14 @@ namespace kg
 		~slice_t()
 		{
 		}
-
+		/**
+		*   \brief  返回 數組地址 或 nullptr
+		*
+		*/
+		inline T* get()const
+		{
+			return _impl->get();
+		}
 		/**
 		*   \brief  返回 切片是否 一樣
 		*
@@ -206,6 +251,34 @@ namespace kg
 		inline slice_t append(const slice_t& slice)
 		{
 			return slice_t(impl_t::append(*_impl,*(slice._impl)));
+		}
+
+		/**
+		*   \brief  如同go的 copy
+		*
+		*	\param	源數組	地址
+		*	\param	size	數組 大小
+		*	\return	拷貝數據大小
+		*
+		*	\note   如果 size 小於 當前切片 長度 當前切片長度不會縮小 僅僅copy數組罷\n
+		*	如果 size 大於 當前切片長度 不會 copy 溢出的 數據
+		*/
+		inline std::size_t copy_from(const T* src,const std::size_t size)
+		{
+			return _impl->copy_from(src,size);
+		}
+		/**
+		*   \brief  如同go的 copy
+		*
+		*	\param	源切片
+		*	\return	拷貝數據大小
+		*
+		*	\note   如果 size 小於 當前切片 長度 當前切片長度不會縮小 僅僅copy數組罷\n
+		*	如果 size 大於 當前切片長度 不會 copy 溢出的 數據
+		*/
+		inline std::size_t copy_from(const slice_t& slice)
+		{
+			return _impl->copy_from(*(slice._impl));
 		}
 
 		/**

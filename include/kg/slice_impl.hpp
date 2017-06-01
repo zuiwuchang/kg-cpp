@@ -7,7 +7,7 @@
 namespace kg
 {
 	/**
-	*	\brief	(內部使用) slice_t 的實現代碼
+	*	\brief	[private] slice_t 的實現代碼
 	*
 	*	\param	T	切片保存的數據 型別
 	*	\param	Alloc	定義了如何 向os 申請釋放內存
@@ -106,6 +106,19 @@ namespace kg
 		~slice_impl()
 		{
 
+		}
+
+		/**
+		*   \brief  返回 數組地址 或 nullptr
+		*
+		*/
+		inline T* get()const
+		{
+			if(_size)
+			{
+				return _array->_p + _pos;
+			}
+			return nullptr;
 		}
 
 		/**
@@ -257,7 +270,7 @@ namespace kg
 				T* dist = impl->_array->_p;
 				if(slice._array)
 				{
-					T* src = slice._array->_p + slice._pos;
+					T* src = slice.get();
 					std::copy(src,src + slice._size,dist);
 				}
 				dist[size] = val;
@@ -318,7 +331,7 @@ namespace kg
 				T* dist = impl->_array->_p;
 				if(slice._array)
 				{
-					T* src = slice._array->_p + slice._pos;
+					T* src = slice.get();
 					std::copy(src,src + slice._size,dist);
 				}
 				std::copy(arrs,arrs+size,dist + slice._size);
@@ -342,10 +355,54 @@ namespace kg
 		{
 			if(slice1._size)
 			{
-				return append(slice,slice1._array->_p + slice1._pos,slice1._size);
+				return append(slice,slice1.get(),slice1._size);
 			}
 			return append(slice,nullptr,0);
 		}
+
+		/**
+		*   \brief  如同go的 copy
+		*
+		*	\param	源數組	地址
+		*	\param	size	數組 大小
+		*	\return	拷貝數據大小
+		*
+		*	\note   如果 size 小於 當前切片 長度 當前切片長度不會縮小 僅僅copy數組罷\n
+		*	如果 size 大於 當前切片長度 不會 copy 溢出的 數據
+		*/
+		std::size_t copy_from(const T* src,const std::size_t size)
+		{
+			if(!_size || !size)
+			{
+				return 0;
+			}
+			std::size_t min = std::min(_size,size);
+			if(min)
+			{
+				std::copy(src,src + min,get());
+				return min;
+			}
+			return 0;
+		}
+
+		/**
+		*   \brief  如同go的 copy
+		*
+		*	\param	源切片
+		*	\return	拷貝數據大小
+		*
+		*	\note   如果 size 小於 當前切片 長度 當前切片長度不會縮小 僅僅copy數組罷\n
+		*	如果 size 大於 當前切片長度 不會 copy 溢出的 數據
+		*/
+		inline std::size_t copy_from(const slice_impl& slice)
+		{
+			if(_size && slice._size)
+			{
+				return copy_from(slice.get(),slice._size);
+			}
+			return 0;
+		}
+
 		/**
 		*   \brief  訪問切片 元素
 		*
