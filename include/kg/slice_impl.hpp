@@ -361,9 +361,9 @@ namespace kg
 		}
 
 		/**
-		*   \brief  如同go的 copy
+		*	\brief  如同go的 copy
 		*
-		*	\param	源數組	地址
+		*	\param	src	源數組	地址
 		*	\param	size	數組 大小
 		*	\return	拷貝數據大小
 		*
@@ -386,9 +386,9 @@ namespace kg
 		}
 
 		/**
-		*   \brief  如同go的 copy
+		*	\brief  如同go的 copy
 		*
-		*	\param	源切片
+		*	\param	slice	源切片
 		*	\return	拷貝數據大小
 		*
 		*	\note   如果 size 小於 當前切片 長度 當前切片長度不會縮小 僅僅copy數組罷\n
