@@ -285,34 +285,34 @@ int main(int argc, char* argv[])
 		*   \brief  返回 正向迭代器 begin
 		*
 		*/
-        inline T* begin()
-        {
-        	return _impl->begin();
-        }
-        /**
+		inline T* begin()
+		{
+			return _impl->begin();
+		}
+		/**
 		*   \brief  返回 正向迭代器 end
 		*
 		*/
-        inline T* end()
-        {
-        	return _impl->end();
-        }
-        /**
+		inline T* end()
+		{
+			return _impl->end();
+		}
+		/**
 		*   \brief  返回 正向 const 迭代器 begin
 		*
 		*/
-        inline const T* begin()const
-        {
-        	return _impl->begin();
-        }
+		inline const T* begin()const
+		{
+			return _impl->begin();
+		}
 		/**
 		*   \brief  返回 正向 const 迭代器 end
 		*
 		*/
-        inline const T* end()const
-        {
-        	return _impl->end();
-        }
+		inline const T* end()const
+		{
+			return _impl->end();
+		}
 	};
 };
 #endif // KG_SLICE_HEADER_HPP

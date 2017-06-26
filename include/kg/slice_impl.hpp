@@ -109,7 +109,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  返回 數組地址 或 nullptr
+		*	\brief  返回 數組地址 或 nullptr
 		*
 		*/
 		inline T* get()const
@@ -122,7 +122,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  返回切片 大小
+		*	\brief  返回切片 大小
 		*
 		*/
 		inline std::size_t size()const
@@ -131,7 +131,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  返回切片 容量
+		*	\brief  返回切片 容量
 		*
 		*/
 		inline std::size_t capacity()const
@@ -157,7 +157,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  切取 切片
+		*	\brief  切取 切片
 		*
 		*	\exception	std::bad_alloc
 		*	\exception	std::out_of_range
@@ -184,7 +184,7 @@ namespace kg
 			return impl;
 		}
 		/**
-		*   \brief  切取 切片
+		*	\brief  切取 切片
 		*
 		*	\exception	std::bad_alloc
 		*	\exception	std::out_of_range
@@ -226,7 +226,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  如同go的 append
+		*	\brief  如同go的 append
 		*
 		*	在 slice 尾添加 數據 返回添加成功後的 新slice
 		*
@@ -279,7 +279,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  如同go的 append
+		*	\brief  如同go的 append
 		*
 		*	在 slice 尾添加 數據 返回添加成功後的 新slice
 		*
@@ -339,7 +339,7 @@ namespace kg
 			return impl;
 		}
 		/**
-		*   \brief  如同go的 append
+		*	\brief  如同go的 append
 		*
 		*	在 slice 尾添加 數據 返回添加成功後的 新slice
 		*
@@ -404,7 +404,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  訪問切片 元素
+		*	\brief  訪問切片 元素
 		*
 		*	\attention	如 標註庫一樣 不會 檢查 越界
 		*
@@ -415,7 +415,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  訪問切片 元素
+		*	\brief  訪問切片 元素
 		*
 		*	\exception std::out_of_range
 		*
@@ -431,7 +431,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  訪問切片 元素
+		*	\brief  訪問切片 元素
 		*
 		*	\attention	如 標註庫一樣 不會 檢查 越界
 		*
@@ -442,7 +442,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  訪問切片 元素
+		*	\brief  訪問切片 元素
 		*
 		*	\exception std::out_of_range
 		*
@@ -458,7 +458,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  返回 正向迭代器 begin
+		*	\brief  返回 正向迭代器 begin
 		*
 		*/
 		T* begin()
@@ -471,7 +471,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  返回 正向迭代器 end
+		*	\brief  返回 正向迭代器 end
 		*
 		*/
 		T* end()
@@ -484,7 +484,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  返回 正向 const 迭代器 begin
+		*	\brief  返回 正向 const 迭代器 begin
 		*
 		*/
 		const T* begin()const
@@ -497,7 +497,7 @@ namespace kg
 		}
 
 		/**
-		*   \brief  返回 正向 const 迭代器 end
+		*	\brief  返回 正向 const 迭代器 end
 		*
 		*/
 		const T* end()const
