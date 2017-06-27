@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <kg/scripts/duktape.hpp>
+#include <kg/scripts/duktape_extras.hpp>
 
 TEST(CreateCopyTest, HandleNoneZeroInput)
 {
@@ -307,6 +308,32 @@ TEST(GetTest, HandleNoneZeroInput)
 int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
+	int rs = RUN_ALL_TESTS();
+	if(!rs)
+	{
+		std::cout<<"\n\n***	extras begin	***\n\n";
+		kg::scripts::duktape_t duk;
+		EXPECT_TRUE(kg::scripts::duktape_extras::init(duk));
+		if(duk.get_top())
+		{
+			std::cout<<"extras not pop\n";
+			return 1;
+		}
 
-	return RUN_ALL_TESTS();
+		//print alert
+		duk.eval_noresult(R"(
+				alert(123,456);
+				print(123,456,[1,2,3,4],{
+					name:'king',
+					lv:'10',
+				},
+				'abc'
+				);
+		)");
+
+		std::cout<<"\n\n";
+		duk.dump_context_stdout();
+		std::cout<<"***	extras end	***\n";
+	}
+	return rs;
 }

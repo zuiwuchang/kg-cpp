@@ -96,9 +96,10 @@
 	<exception>
 	<inttypes.h>
 
-1498549942 source:/home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/main.cpp
+1498553808 source:/home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/main.cpp
 	<gtest/gtest.h>
 	<kg/scripts/duktape.hpp>
+	<kg/scripts/duktape_extras.hpp>
 
 1492259323 source:/home/king/program/lib/c++/kg-cpp/include/kg/scripts/duktape/duktape.c
 	"duktape.h"

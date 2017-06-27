@@ -587,9 +587,9 @@ namespace kg
 			*				如果 out_len == nullptr 返回 nullptr
 			*	\return		只讀的 字符串指針
 			*/
-			inline const char * get_lstring(duk_idx_t idx, duk_size_t *out_len)
+			inline const char * get_lstring(duk_idx_t idx, duk_size_t *len)
 			{
-				return duk_get_lstring(_ctx.get(),idx,out_len);
+				return duk_get_lstring(_ctx.get(),idx,len);
 			}
 
 			/**
@@ -597,7 +597,7 @@ namespace kg
 			*	... val ...\n
 			*
 			*	\param idx		數據在棧中位置
-			*	\param len		返回 字符串長\n
+			*	\param out_len	返回 字符串長\n
 			*					如果 out_len == nullptr 返回 nullptr
 			*	\param	def_ptr	默認的 字符串返回值
 			*	\param	def_len	默認的 長度返回值
