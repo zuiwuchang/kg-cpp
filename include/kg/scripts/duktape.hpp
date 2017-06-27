@@ -225,6 +225,15 @@ namespace kg
 			}
 
 			/**
+			*	\brief 爲棧中指定數據 創建一個副本 並入棧\n
+			*	... val ... -> ... val ... val\n
+			*/
+			inline void dup(duk_idx_t idx)
+			{
+				duk_dup(_ctx.get(),idx);
+			}
+
+			/**
 			*	\brief 入棧一個 double\n
 			*	... -> ... val\n
 			*/
