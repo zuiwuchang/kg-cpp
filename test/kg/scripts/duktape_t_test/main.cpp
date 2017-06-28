@@ -331,6 +331,7 @@ int main(int argc, char* argv[])
 				);
 		)");
 
+
 		std::cout<<"\n\n";
 		duk.dump_context_stdout();
 		std::cout<<"***	extras end	***\n";

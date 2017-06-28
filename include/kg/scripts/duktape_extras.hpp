@@ -1,6 +1,7 @@
 #ifndef KG_SCRIPTS_DUKTAPE_EXTRAS_HEADER_HPP
 #include "duktape/duktape.h"
 #include "duktape-extras/print_alert.hpp"
+#include "duktape-extras/module.hpp"
 
 namespace kg
 {
@@ -23,7 +24,9 @@ namespace kg
 			*/
 			inline static bool init(duk_context* ctx)
 			{
-				return duktape::print_alert::init(ctx);
+				return duktape::print_alert::init(ctx) &&
+					duktape::module::init(ctx)
+					;
 			}
 		};
 	};
