@@ -227,10 +227,22 @@ namespace kg
 			/**
 			*	\brief 爲棧中指定數據 創建一個副本 並入棧\n
 			*	... val ... -> ... val ... val\n
+			*
+			*	\attention	對於 obj array 等引用 創建的時 一個引用 同 c++ copy 語義
 			*/
 			inline void dup(duk_idx_t idx)
 			{
 				duk_dup(_ctx.get(),idx);
+			}
+			/**
+			*	\brief 爲棧頂元素 創建一個副本 並入棧\n
+			*	... val ... -> ... val ... val\n
+			*
+			*	\attention	對於 obj array 等引用 創建的時 一個引用 同 c++ copy 語義
+			*/
+			inline void dup_top()
+			{
+				duk_dup_top(_ctx.get());
 			}
 
 			/**

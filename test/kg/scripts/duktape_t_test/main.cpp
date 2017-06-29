@@ -323,6 +323,87 @@ TEST(CPtrTest, HandleNoneZeroInput)
 	EXPECT_FALSE(duk.is_pointer(-1));
 	EXPECT_FALSE(duk.to_pointer(-1));
 }
+TEST(DumpTest, HandleNoneZeroInput)
+{
+	kg::scripts::duktape_t duk;
+
+	//object
+	{
+		duk_idx_t id = duk.push_object();
+		duk.push("king");
+		duk.put_prop_string(id,"name");
+		duk.dup_top();
+		EXPECT_EQ(2,duk.get_top());
+
+		duk.push("kate");
+		duk.put_prop_string(-2,"name");
+		EXPECT_EQ(2,duk.get_top());
+
+		duk.get_prop_string(id,"name");
+		EXPECT_EQ(std::string("kate"),duk.get_string(-1));
+		duk.pop();
+
+		duk.get_prop_string(-2,"name");
+		EXPECT_EQ(std::string("kate"),duk.get_string(-1));
+		duk.pop();
+
+		duk.pop_2();
+	}
+
+	//array
+	{
+		duk_idx_t id = duk.push_array();
+		duk.push("king");
+		duk.put_prop_index(id,0);
+		duk.push("anita");
+		duk.put_prop_index(id,1);
+		duk.set_length(id,2);
+		duk.dup_top();
+		EXPECT_EQ(2,duk.get_top());
+
+		{
+			duk.push("kate");
+			duk.put_prop_index(-2,0);
+			EXPECT_EQ(duk.get_length(-1),2);
+
+			duk.get_prop_index(id,0);
+			EXPECT_EQ(std::string("kate"),duk.get_string(-1));
+			duk.pop();
+
+			duk.get_prop_index(id,1);
+			EXPECT_EQ(std::string("anita"),duk.get_string(-1));
+			duk.pop();
+
+			duk.get_prop_index(-1,0);
+			EXPECT_EQ(std::string("kate"),duk.get_string(-1));
+			duk.pop();
+
+			duk.get_prop_index(-1,1);
+			EXPECT_EQ(std::string("anita"),duk.get_string(-1));
+			duk.pop();
+		}
+
+		{
+			duk.push("dark");
+			duk.put_prop_index(id,2);
+			duk.set_length(id,3);
+			EXPECT_EQ(duk.get_length(-1),3);
+			EXPECT_EQ(duk.get_length(id),3);
+
+			duk.get_prop_index(-1,2);
+			EXPECT_EQ(std::string("dark"),duk.get_string(-1));
+			duk.pop();
+
+			duk.get_prop_index(id,2);
+			EXPECT_EQ(std::string("dark"),duk.get_string(-1));
+			duk.pop();
+
+			duk.pop_2();
+		}
+	}
+
+	//duk.dump_context_stdout();
+}
 int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);
