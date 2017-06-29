@@ -305,6 +305,24 @@ TEST(GetTest, HandleNoneZeroInput)
 	}
 
 }
+TEST(CPtrTest, HandleNoneZeroInput)
+{
+	kg::scripts::duktape_t duk;
+	int x = 123;
+	duk.push_pointer(&x);
+	EXPECT_TRUE(duk.is_pointer(-1));
+	int* p = (int*)duk.get_pointer(-1);
+	EXPECT_EQ(p,&x);
+	EXPECT_EQ(*p,123);
+	*p = 456;
+	EXPECT_EQ(x,456);
+	duk.pop();
+
+
+	duk.push(123);
+	EXPECT_FALSE(duk.is_pointer(-1));
+	EXPECT_FALSE(duk.to_pointer(-1));
+}
 int main(int argc, char* argv[])
 {
     testing::InitGoogleTest(&argc, argv);

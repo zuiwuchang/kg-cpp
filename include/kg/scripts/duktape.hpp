@@ -350,6 +350,16 @@ namespace kg
 			}
 
 			/**
+			*	\brief		入棧一個 c 指針\n
+			*	... -> ... ptr\n
+			*
+			*/
+			inline void push_pointer(void *p)
+			{
+				duk_push_pointer(_ctx.get(),p);
+			}
+
+			/**
 			*	\brief	將當前激活的 棧 格式化爲字符串 入棧\n
 			*	... -> ... str\n
 			*
@@ -488,6 +498,14 @@ namespace kg
 				return duk_is_null_or_undefined(_ctx.get(),idx) != 0;
 			}
 			/**
+			*	\brief	返回棧 中指定元素 是否是 c 指針\n
+			*	... val ...\n
+			*/
+			inline bool is_pointer(duk_idx_t idx)
+			{
+				return duk_is_pointer(_ctx.get(),idx) != 0;
+			}
+			/**
 			*	\brief	返回棧 中指定元素 是否是 array\n
 			*	... val ...\n
 			*/
@@ -600,6 +618,27 @@ namespace kg
 			{
 				return duk_get_lstring(_ctx.get(),idx,len);
 			}
+
+			/**
+			*	\brief	如果 數據 是 c 指針 返回 指針 否則返回 nullptr \n
+			*	... val ...\n
+			*
+			*/
+			inline void * get_pointer(duk_idx_t idx)
+			{
+				return duk_get_pointer(_ctx.get(),idx);
+			}
+
+			/**
+			*	\brief	如果 數據 是 c 指針 返回 指針 否則返回 def \n
+			*	... val ...\n
+			*
+			*/
+			inline void * get_pointer(duk_idx_t idx,void* def)
+			{
+				return duk_get_pointer_default(_ctx.get(),idx,def);
+			}
+
 
 			/**
 			*	\brief	如果 數據 是 string 返回 string值 否則返回 def_ptr def_len \n
@@ -755,6 +794,14 @@ namespace kg
 				out = std::string(str,len);
 			}
 
+			/**
+			*	\brief	to c 指針\n
+			*	... val ... -> ... pointer(val) ...\n
+			*/
+			inline void* to_pointer(duk_idx_t idx)
+			{
+				return duk_to_pointer(_ctx.get(),idx);
+			}
 
 			/*		array		*/
 			/**
