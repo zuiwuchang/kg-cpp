@@ -1,4 +1,5 @@
 #ifndef KG_ALLOCATOR_HEADER_HPP
+#define KG_ALLOCATOR_HEADER_HPP
 
 namespace kg
 {

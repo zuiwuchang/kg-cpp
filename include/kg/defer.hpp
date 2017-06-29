@@ -1,4 +1,6 @@
 #ifndef KG_DEFER_HEADER_HPP
+#define KG_DEFER_HEADER_HPP
+
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 namespace kg

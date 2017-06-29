@@ -1,4 +1,5 @@
 #ifndef KG_DEFINE_HEADER_HPP
+#define KG_DEFINE_HEADER_HPP
 
 //typedef name to type_t
 #define KG_TYPEDEF_T(name)	typedef name type_t;

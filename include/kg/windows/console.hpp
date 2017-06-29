@@ -1,4 +1,5 @@
 #ifndef KG_WINDOWS_CONSOLE_HEADER_HPP
+#define KG_WINDOWS_CONSOLE_HEADER_HPP
 
 #include <Windows.h>
 namespace kg

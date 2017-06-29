@@ -1,4 +1,5 @@
 #ifndef KG_SLICE_HEADER_HPP
+#define KG_SLICE_HEADER_HPP
 
 #include "slice_impl.hpp"
 

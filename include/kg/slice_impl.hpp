@@ -1,4 +1,5 @@
 #ifndef KG_SLICE_IMPL_HEADER_HPP
+#define KG_SLICE_IMPL_HEADER_HPP
 
 #include "define.hpp"
 #include "allocator.hpp"

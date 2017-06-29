@@ -420,6 +420,7 @@ int main(int argc, char* argv[])
 		}
 
 		//print alert
+		std::cout<<"\n\n	******		print alert		******\n";
 		duk.eval_noresult(R"(
 				alert(123,456);
 				print(123,456,[1,2,3,4],{
@@ -428,6 +429,15 @@ int main(int argc, char* argv[])
 				},
 				'abc'
 				);
+		)");
+
+		//print alert
+		std::cout<<"\n\n	******		modules		******\n";
+		putenv("KG_DUK_JS_PATH=.");
+		duk.eval_noresult(R"(
+				alert("_g_kg_modules = ",_g_kg_modules);
+				alert("kg_package = ",kg_package);
+				alert("kg_import = ",kg_import);
 		)");
 
 

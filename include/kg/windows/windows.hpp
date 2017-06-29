@@ -1,5 +1,5 @@
 #ifndef KG_WINDOWS_HEADER_HPP
-
+#define KG_WINDOWS_HEADER_HPP
 
 namespace kg
 {

@@ -1,4 +1,5 @@
 #ifndef KG_SCRIPTS_DUKTAPE_HEADER_HPP
+#define KG_SCRIPTS_DUKTAPE_HEADER_HPP
 
 namespace kg
 {

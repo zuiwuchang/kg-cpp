@@ -1,4 +1,5 @@
 #ifndef KG_SCRIPTS_DUKTAPE_EXTRAS_HEADER_HPP
+#define KG_SCRIPTS_DUKTAPE_EXTRAS_HEADER_HPP
 #include "duktape/duktape.h"
 #include "duktape-extras/print_alert.hpp"
 #include "duktape-extras/module.hpp"
