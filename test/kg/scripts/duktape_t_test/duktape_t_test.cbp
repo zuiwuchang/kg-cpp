@@ -35,7 +35,6 @@
 		<Linker>
 			<Add option="-lgtest" />
 			<Add option="-lpthread" />
-			<Add option="-ldl" />
 		</Linker>
 		<Unit filename="../../../../include/kg/scripts/duktape/duktape.c">
 			<Option compilerVar="CC" />

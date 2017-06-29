@@ -117,8 +117,41 @@ namespace kg
 			{
 
 #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)
-				duk_push_undefined(ctx);
-				return false;
+				static wchar_t buf[MAX_PATH];
+				MultiByteToWideChar(CP_UTF8,0,path.c_str(),-1,buf,MAX_PATH);
+	
+				HMODULE  handle = LoadLibraryW(buf);
+				if(!handle)
+				{
+					duk_push_undefined(ctx);
+					return false;
+				}
+
+				kg_duk_package_ft duk_func = (kg_duk_package_ft)GetProcAddress(handle,"kg_duk_package");
+				if(!duk_func)
+				{
+					FreeLibrary(handle);
+
+					duk_push_string(ctx,(path + " not a module").c_str());
+					return false;
+				}
+
+				duk_push_c_function(ctx,duk_func,0);
+				if(duk_pcall(ctx,0) != DUK_EXEC_SUCCESS)
+				{
+					FreeLibrary(handle);
+
+					return false;
+				}
+
+				if(!duk_is_object(ctx,-1))
+				{
+					FreeLibrary(handle);
+
+					return false;
+				}
+
+				return true;
 #else
 				void* handle = dlopen(path.c_str(),RTLD_LAZY);
 				if(!handle)
@@ -139,11 +172,15 @@ namespace kg
 				duk_push_c_function(ctx,duk_func,0);
 				if(duk_pcall(ctx,0) != DUK_EXEC_SUCCESS)
 				{
+					dlclose(handle);
+
 					return false;
 				}
 
 				if(!duk_is_object(ctx,-1))
 				{
+					dlclose(handle);
+
 					return false;
 				}
 

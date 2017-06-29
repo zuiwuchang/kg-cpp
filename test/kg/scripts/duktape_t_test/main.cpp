@@ -436,6 +436,56 @@ int main(int argc, char* argv[])
 
 		//print alert
 		std::cout<<"\n\n	******		modules		******\n";
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)
+		putenv("KG_DUK_JS_PATH=/lib/kg-duk-js;/usr/lib/kg-duk-js;.");
+		if(!duk.peval(R"(
+				alert("_g_kg_modules = ",_g_kg_modules);
+				alert("kg_import = ",kg_import);
+				alert();
+
+				alert("******		js module test		******")
+				var m = kg_import("js/my");
+				alert("name =",m.GetName());
+				m.SetName("kate");
+				alert("name =",m.GetName());
+				var m1 = kg_import("js/my","js");
+				alert("m == m1",m==m1);
+
+				var m2 = kg_import("js/my");
+				alert("m == m2",m==m2);
+				alert("name =",m2.GetName());
+
+				m = kg_import("js/mye");
+				alert("mye :",m);
+		)"))
+		{
+
+			std::cout<<duk.safe_to_c_string(-1);
+		}
+		duk.pop();
+
+		putenv("KG_DUK_C_PATH=/lib/kg-duk-c;/usr/lib/kg-duk-c;.");
+		if(!duk.peval(R"(
+						alert("\n\n******		c module test		******")
+						var m = kg_import("c/libmy");
+						alert("name =",m.GetName());
+						m.SetName("kate");
+						alert("name =",m.GetName());
+						var m1 = kg_import("c/libmy","c");
+						alert("m == m1",m==m1);
+						var mj = kg_import("js/my");
+						alert(mj,"mj != m",mj != m);
+
+						var m2 = kg_import("c/libmy");
+						alert("m == m2",m==m2);
+						alert("name =",m2.GetName());
+		)"))
+		{
+
+			std::cout<<duk.safe_to_c_string(-1);
+		}
+#else
+
 		putenv("KG_DUK_JS_PATH=/lib/kg-duk-js:/usr/lib/kg-duk-js:.");
 		if(!duk.peval(R"(
 				alert("_g_kg_modules = ",_g_kg_modules);
@@ -484,7 +534,7 @@ int main(int argc, char* argv[])
 			std::cout<<duk.safe_to_c_string(-1);
 		}
 		duk.pop();
-
+#endif // WIN32
 
 		std::cout<<"\n\n";
 		duk.dump_context_stdout();

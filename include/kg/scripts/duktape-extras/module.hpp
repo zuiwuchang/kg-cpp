@@ -285,7 +285,7 @@ namespace kg
 				}
 				std::string env(str);
 				boost::trim(env);
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)
 				const char* flag = ";";
 #else
 				const char* flag = ":";
