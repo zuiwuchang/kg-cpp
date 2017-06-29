@@ -229,6 +229,7 @@ namespace kg
 
 					while (duk_next(ctx, -1 , 1 ))
 					{
+						std::string key = duk_to_string(ctx,-2);
 
 						//libs
 						if(!duk_get_prop_string(ctx,-1,"libs"))
@@ -277,7 +278,12 @@ namespace kg
 			*/
 			static duk_ret_t import_pkg(duk_context *ctx,modules::loader_i* loader,const std::string pkg)
 			{
-				std::string env = getenv(loader->module_env());
+				const char* str = getenv(loader->module_env());
+				if(!str)
+				{
+					return 0;
+				}
+				std::string env(str);
 				boost::trim(env);
 #ifdef WIN32
 				const char* flag = ";";
