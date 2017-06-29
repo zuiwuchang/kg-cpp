@@ -16,6 +16,8 @@ TEST(StackTest, HandleNoneZeroInput)
 {
 	kg::scripts::duktape_t duk;
 
+
+
 	EXPECT_EQ(duk.get_top_index(),DUK_INVALID_INDEX);
 
 	duk_idx_t i = 0;
@@ -433,12 +435,28 @@ int main(int argc, char* argv[])
 
 		//print alert
 		std::cout<<"\n\n	******		modules		******\n";
-		putenv("KG_DUK_JS_PATH=.");
-		duk.eval_noresult(R"(
+		putenv("KG_DUK_JS_PATH=/lib/kg-duk-js:/usr/lib/kg-duk-js:.");
+		if(!duk.peval(R"(
 				alert("_g_kg_modules = ",_g_kg_modules);
 				alert("kg_package = ",kg_package);
 				alert("kg_import = ",kg_import);
-		)");
+				alert();
+
+				var m = kg_import("js/my");
+				alert("name =",m.GetName());
+				m.SetName("kate");
+				alert("name =",m.GetName());
+				var m1 = kg_import("js/my","js");
+				alert("m == m1",m==m1);
+
+				var m2 = kg_import("js/my");
+				alert("m == m2",m==m2);
+				alert("name =",m2.GetName());
+		)"))
+		{
+			std::cout<<duk.safe_to_c_string(-1);
+		}
+		duk.pop();
 
 
 		std::cout<<"\n\n";
@@ -447,3 +465,4 @@ int main(int argc, char* argv[])
 	}
 	return rs;
 }
+

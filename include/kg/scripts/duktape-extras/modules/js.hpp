@@ -2,6 +2,9 @@
 #define KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_JS_HEADER_HPP
 #include "loader.hpp"
 
+#include <boost/algorithm/string.hpp>
+#include <fstream>
+
 namespace kg
 {
 	namespace scripts
@@ -29,7 +32,7 @@ namespace kg
 			*/
 			static void destory(void* p)
 			{
-				//delete (js_loader_t*)p;
+				delete (js_loader_t*)p;
 			}
 
 			/**
@@ -67,15 +70,65 @@ namespace kg
 			*/
 			virtual std::string module_path(const std::string& lib,const std::string& pkg)
 			{
+				if(boost::algorithm::ends_with(lib,"/") || boost::algorithm::ends_with(lib,"\\"))
+				{
+					return lib + pkg + ".js";
+				}
 				return lib + "/" + pkg + ".js";
 			}
 
 			/**
 			*	\brief 加載模塊\n
+			*	... -> ... obj			加載成功 將 模塊 入棧
+			*	... -> ... undefined	加載失敗 將 模塊不存在 入棧
+			*	... -> ... emsg			加載失敗 將 錯誤描述字符串 入棧
 			*
+			*	\param ctx	duk運行環境
+			*	\param path 模塊路徑
 			*/
-			virtual bool module_import(const std::string& pkg,const std::string& path)
+			virtual bool module_import(duk_context* ctx,const std::string& path)
 			{
+				std::ifstream inf(path,std::ios::in | std::ios::binary);
+				if(!inf.is_open())
+				{
+					duk_push_undefined(ctx);
+					return false;
+				}
+
+				inf.seekg(0,std::ios::end);
+				std::istream::pos_type size = inf.tellg();
+				if(size > 1024 * 1024 * 256) //256 mb
+				{
+					duk_push_string(ctx,"module size must small than 256mb");
+					return false;
+				}
+
+				inf.seekg(0,std::ios::beg);
+				char* buf = (char*)malloc(size);
+				if(!buf)
+				{
+					duk_push_string(ctx,"malloc error");
+					return false;
+				}
+				inf.read(buf,size);
+				if( duk_peval_lstring(ctx,buf,size) != 0)
+				{
+					free(buf);
+					return false;
+				}
+				free(buf);
+
+				if(duk_is_c_function(ctx,-1))
+				{
+					duk_pop(ctx);
+					duk_push_string(ctx,(path + " not a module").c_str());
+					return false;
+				}
+				duk_call(ctx,0);
+				if(!duk_is_object(ctx,-1))
+				{
+					return false;
+				}
 				return true;
 			}
 
