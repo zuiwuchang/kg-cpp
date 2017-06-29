@@ -1231,7 +1231,7 @@ namespace kg
 			*/
 			inline bool peval()
 			{
-				return 0 == duk_peval(_ctx.get());
+				return 0 != duk_peval(_ctx.get());
 			}
 			/**
 			*	\brief	在 安全模式下 將字符串 執行 eval 操作 並且 將 eval 返回值/錯誤描述 入棧\n
@@ -1241,7 +1241,7 @@ namespace kg
 			*/
 			inline bool peval(const char* str)
 			{
-				return 0 == duk_peval_string(_ctx.get(),str);
+				return 0 != duk_peval_string(_ctx.get(),str);
 			}
 			/**
 			*	\brief	在 安全模式下 將字符串 執行 eval 操作 並且 將 eval 返回值/錯誤描述 入棧\n
@@ -1251,7 +1251,7 @@ namespace kg
 			*/
 			inline bool peval(const char* str,duk_size_t len)
 			{
-				return 0 == duk_peval_lstring(_ctx.get(),str,len);
+				return 0 != duk_peval_lstring(_ctx.get(),str,len);
 			}
 			/**
 			*	\brief	在 安全模式下 將字符串 執行 eval 操作 並且 將 eval 返回值/錯誤描述 入棧\n
@@ -1261,7 +1261,7 @@ namespace kg
 			*/
 			inline bool peval(const std::string& str)
 			{
-				return 0 == duk_peval_lstring(_ctx.get(),str.data(),str.size());
+				return 0 != duk_peval_lstring(_ctx.get(),str.data(),str.size());
 			}
 
 
@@ -1272,7 +1272,7 @@ namespace kg
 			*/
 			inline bool peval_noresult()
 			{
-				return 0 == duk_peval_noresult(_ctx.get());
+				return 0 != duk_peval_noresult(_ctx.get());
 			}
 			/**
 			*	\brief	在 安全模式下 將字符串 執行 eval 操作\n
@@ -1281,7 +1281,7 @@ namespace kg
 			*/
 			inline bool peval_noresult(const char* str)
 			{
-				return 0 == duk_peval_string_noresult(_ctx.get(),str);
+				return 0 != duk_peval_string_noresult(_ctx.get(),str);
 			}
 			/**
 			*	\brief	在 安全模式下 將字符串 執行 eval 操作\n
@@ -1290,7 +1290,7 @@ namespace kg
 			*/
 			inline bool peval_noresult(const char* str,duk_size_t len)
 			{
-				return 0 == duk_peval_lstring_noresult(_ctx.get(),str,len);
+				return 0 != duk_peval_lstring_noresult(_ctx.get(),str,len);
 			}
 			/**
 			*	\brief	在 安全模式下 將字符串 執行 eval 操作\n
@@ -1299,7 +1299,7 @@ namespace kg
 			*/
 			inline bool peval_noresult(const std::string& str)
 			{
-				return 0 == duk_peval_lstring_noresult(_ctx.get(),str.data(),str.size());
+				return 0 != duk_peval_lstring_noresult(_ctx.get(),str.data(),str.size());
 			}
 
 
@@ -1347,7 +1347,7 @@ namespace kg
 			*/
 			inline bool pcall(duk_idx_t nargs)
 			{
-				return 0 == duk_pcall(_ctx.get(),nargs);
+				return DUK_EXEC_SUCCESS == duk_pcall(_ctx.get(),nargs);
 			}
 
 			/**
@@ -1359,7 +1359,7 @@ namespace kg
 			*/
 			inline bool pcall_method(duk_idx_t nargs)
 			{
-				return 0 == duk_pcall_method(_ctx.get(),nargs);
+				return DUK_EXEC_SUCCESS == duk_pcall_method(_ctx.get(),nargs);
 			}
 
 			/**
@@ -1372,7 +1372,7 @@ namespace kg
 			*/
 			inline bool pcall_prop(duk_idx_t idx,duk_idx_t nargs)
 			{
-				return 0 == duk_pcall_prop(_ctx.get(),idx,nargs);
+				return DUK_EXEC_SUCCESS == duk_pcall_prop(_ctx.get(),idx,nargs);
 			}
 		};
 	};
