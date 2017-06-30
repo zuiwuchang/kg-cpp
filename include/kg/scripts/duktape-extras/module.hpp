@@ -56,11 +56,6 @@ namespace kg
 				}
 				duk_put_prop(ctx,-3);
 
-				//創建 package 函數
-				duk_push_string(ctx,"kg_package");
-				duk_push_c_function(ctx,native_package,1);
-				duk_put_prop(ctx,-3);
-
 				//創建 import 函數
 				duk_push_string(ctx,"kg_import");
 				duk_push_c_function(ctx,native_import,2);
@@ -161,15 +156,6 @@ namespace kg
 				duk_pop(ctx);
 				return 0;
 			}
-			static duk_ret_t native_package(duk_context *ctx)
-			{
-				/*
-				duk_push_context_dump(ctx);
-				fprintf(stdout, "%s\n", duk_safe_to_string(ctx, -1));
-				duk_pop(ctx);
-				*/
-				return 0;
-			}
 			static duk_ret_t native_import(duk_context *ctx)
 			{
 				if(!duk_is_string(ctx,0))
@@ -267,7 +253,7 @@ namespace kg
 							return 1;
 						}
 
-						duk_pop_n(ctx,4);
+						duk_pop_3(ctx);
 					}
 					duk_pop(ctx);
 				}

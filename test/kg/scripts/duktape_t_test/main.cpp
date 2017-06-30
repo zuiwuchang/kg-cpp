@@ -438,10 +438,10 @@ int main(int argc, char* argv[])
 		putenv("KG_DUK_JS_PATH=/lib/kg-duk-js:/usr/lib/kg-duk-js:.");
 		if(!duk.peval(R"(
 				alert("_g_kg_modules = ",_g_kg_modules);
-				alert("kg_package = ",kg_package);
 				alert("kg_import = ",kg_import);
 				alert();
 
+				alert("******		js module test		******")
 				var m = kg_import("js/my");
 				alert("name =",m.GetName());
 				m.SetName("kate");
@@ -452,6 +452,9 @@ int main(int argc, char* argv[])
 				var m2 = kg_import("js/my");
 				alert("m == m2",m==m2);
 				alert("name =",m2.GetName());
+
+
+				alert("******		c module test		******")
 		)"))
 		{
 			std::cout<<duk.safe_to_c_string(-1);
