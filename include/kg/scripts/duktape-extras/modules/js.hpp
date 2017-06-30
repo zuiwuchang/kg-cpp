@@ -37,6 +37,7 @@ namespace kg
 
 			/**
 			*	\brief 返回 能夠加載的 模塊 類型\n
+			*	return "js";\n
 			*	例如\n
 			*	 返回 字符串 js 代表加載 js 模塊\n
 			*	 返回 字符串 c 代表加載 c 模塊\n
@@ -48,11 +49,12 @@ namespace kg
 
 			/**
 			*	\brief 返回 模塊 查找的環境變量名\n
+			*	return "KG_DUK_JS_PATH";\n
 			*
-			*	\note	如返回 KG_DUK_JS_PATH=/lib/kg-duk:/usr/lib/kg-duk:. 在在下面三個目錄中 查找模塊
-			*			/lib/kg-duk
-			*			/usr/lib/kg-duk
-			*			.
+			*	\note	如返回 KG_DUK_JS_PATH=/lib/kg-duk:/usr/lib/kg-duk:. 在在下面三個目錄中 查找模塊\n
+			*			/lib/kg-duk\n
+			*			/usr/lib/kg-duk\n
+			*			.\n
 			*
 			*	\attention	windows 下使用 ; 其它平臺使用 : 分隔 環境變量值
 			*/
@@ -79,9 +81,9 @@ namespace kg
 
 			/**
 			*	\brief 加載模塊\n
-			*	... -> ... obj			加載成功 將 模塊 入棧
-			*	... -> ... undefined	加載失敗 將 模塊不存在 入棧
-			*	... -> ... emsg			加載失敗 將 錯誤描述字符串 入棧
+			*	... -> ... obj			加載成功 將 模塊 入棧\n
+			*	... -> ... undefined	加載失敗 將 模塊不存在 入棧\n
+			*	... -> ... emsg			加載失敗 將 錯誤描述字符串 入棧\n
 			*
 			*	\param ctx	duk運行環境
 			*	\param path 模塊路徑
@@ -124,7 +126,11 @@ namespace kg
 					duk_push_string(ctx,(path + " not a module").c_str());
 					return false;
 				}
-				duk_call(ctx,0);
+				if(duk_pcall(ctx,0) != DUK_EXEC_SUCCESS)
+				{
+					return false;
+				}
+
 				if(!duk_is_object(ctx,-1))
 				{
 					return false;
