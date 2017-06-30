@@ -38,10 +38,10 @@ namespace kg
 			/**
 			*	\brief 返回 模塊 查找的環境變量名\n
 			*
-			*	\note	如返回 KG_DUK_JS_PATH=/lib/kg-duk-js:/usr/lib/kg-duk-js:. 在在下面三個目錄中 查找模塊
-			*			/lib/kg-duk-js
-			*			/usr/lib/kg-duk-js
-			*			.
+			*	\note	如返回 KG_DUK_JS_PATH=/lib/kg-duk-js:/usr/lib/kg-duk-js:. 在在下面三個目錄中 查找模塊\n
+			*			/lib/kg-duk-js\n
+			*			/usr/lib/kg-duk-js\n
+			*			.\n
 			*
 			*	\attention	windows 下使用 ; 其它平臺使用 : 分隔 環境變量值
 			*/
@@ -58,9 +58,9 @@ namespace kg
 
 			/**
 			*	\brief 加載模塊\n
-			*	... -> ... obj			加載成功 將 模塊 入棧
-			*	... -> ... undefined	加載失敗 將 模塊不存在 入棧
-			*	... -> ... emsg			加載失敗 將 錯誤描述字符串 入棧
+			*	... -> ... obj			加載成功 將 模塊 入棧\n
+			*	... -> ... undefined	加載失敗 將 模塊不存在 入棧\n
+			*	... -> ... emsg			加載失敗 將 錯誤描述字符串 入棧\n
 			*
 			*	\param ctx	duk運行環境
 			*	\param path 模塊路徑

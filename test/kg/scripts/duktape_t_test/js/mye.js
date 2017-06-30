@@ -1,5 +1,5 @@
 (function() {
-	"use strict";
+	"use strict";show_error_module
 	var name = "king";
 	return {
 		GetName:function(){

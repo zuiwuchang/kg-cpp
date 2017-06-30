@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <kg/scripts/duktape.hpp>
+#define USE_KG_SCRIPTS_DUKTAPE_EXTRAS_C_MODULE
 #include <kg/scripts/duktape_extras.hpp>
 
 TEST(CreateCopyTest, HandleNoneZeroInput)
@@ -453,10 +454,33 @@ int main(int argc, char* argv[])
 				alert("m == m2",m==m2);
 				alert("name =",m2.GetName());
 
-
-				alert("******		c module test		******")
+				m = kg_import("js/mye");
+				alert("mye :",m);
 		)"))
 		{
+
+			std::cout<<duk.safe_to_c_string(-1);
+		}
+		duk.pop();
+
+		putenv("KG_DUK_C_PATH=/lib/kg-duk-c:/usr/lib/kg-duk-c:.");
+		if(!duk.peval(R"(
+						alert("\n\n******		c module test		******")
+						var m = kg_import("c/liblibmy");
+						alert("name =",m.GetName());
+						m.SetName("kate");
+						alert("name =",m.GetName());
+						var m1 = kg_import("c/liblibmy","c");
+						alert("m == m1",m==m1);
+						var mj = kg_import("js/my");
+						alert(mj,"mj != m",mj != m);
+
+						var m2 = kg_import("c/liblibmy");
+						alert("m == m2",m==m2);
+						alert("name =",m2.GetName());
+		)"))
+		{
+
 			std::cout<<duk.safe_to_c_string(-1);
 		}
 		duk.pop();

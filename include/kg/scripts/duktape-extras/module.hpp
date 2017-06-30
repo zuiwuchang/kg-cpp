@@ -4,6 +4,10 @@
 #include "modules/loader.hpp"
 #include "modules/js.hpp"
 
+#ifdef USE_KG_SCRIPTS_DUKTAPE_EXTRAS_C_MODULE
+#include "modules/c.hpp"
+#endif // USE_KG_SCRIPTS_DUKTAPE_EXTRAS_C_MODULE
+
 #include <boost/algorithm/string.hpp>
 #include <boost/xpressive/xpressive_dynamic.hpp>
 
@@ -31,6 +35,11 @@ namespace kg
 		*	模塊
 		*		模塊是 一個 返回值是 object 的 function
 		* </pre>
+		*
+		*	\note	module 提供了兩個 默認的 模塊加載器 js_loader_t c_loader_t 用於加載 js c 模塊\n
+		*			c_loader_t 只有在定義了 宏 USE_KG_SCRIPTS_DUKTAPE_EXTRAS_C_MODULE 時 才會 被註冊\n
+		*			使用者可以 在 incude 前 定義 USE_KG_SCRIPTS_DUKTAPE_EXTRAS_C_MODULE 會 手動 調用 register_loader 來爲 c_loader_t 註冊
+		*	\attention	如果使用者 自己現實了其它模塊 加載器 使用 register_loader 來註冊
 		*/
 		class module
 		{
@@ -66,7 +75,9 @@ namespace kg
 
 				//加載默認 模塊 加載器
 				register_loader(ctx,modules::js_loader_t::create(),modules::js_loader_t::destory);
-
+#ifdef USE_KG_SCRIPTS_DUKTAPE_EXTRAS_C_MODULE
+				register_loader(ctx,modules::c_loader_t::create(),modules::c_loader_t::destory);
+#endif // USE_KG_SCRIPTS_DUKTAPE_EXTRAS_C_MODULE
 				return true;
 			}
 
