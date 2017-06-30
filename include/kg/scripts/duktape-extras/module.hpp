@@ -8,6 +8,8 @@
 #include "modules/c.hpp"
 #endif // USE_KG_SCRIPTS_DUKTAPE_EXTRAS_C_MODULE
 
+#include <fstream>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/xpressive/xpressive_dynamic.hpp>
 

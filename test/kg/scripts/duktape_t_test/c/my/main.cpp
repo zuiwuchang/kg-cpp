@@ -1,13 +1,6 @@
 #include "duktape.h"
 #include <string>
 
-#if defined(__GNUC__) && ((__GNUC__ >= 4) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3))
-#define NP_VISIBILITY_DEFAULT __attribute__((visibility("default")))
-#else
-#define NP_VISIBILITY_DEFAULT
-#endif
-
-#define NP_EXPORT(__type) NP_VISIBILITY_DEFAULT __type
 
 extern "C"
 {

@@ -96,7 +96,7 @@
 	<exception>
 	<inttypes.h>
 
-1498794365 source:/home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/c/my/main.cpp
+1498807599 source:/home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/c/my/main.cpp
 	"duktape.h"
 	<string>
 
@@ -107,10 +107,10 @@
 	<stdarg.h>
 	<string.h>
 
-1498794434 /home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/c/my/duktape.h
+1498794491 /home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/c/my/duktape.h
 	"duk_config.h"
 
-1492259323 /home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/c/my/duk_config.h
+1498794485 /home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/c/my/duk_config.h
 	<sys/isa_defs.h>
 	<TargetConditionals.h>
 	<architecture/byte_order.h>
