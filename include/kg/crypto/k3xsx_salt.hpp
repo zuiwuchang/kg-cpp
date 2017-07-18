@@ -34,7 +34,7 @@ private:
     *   \brief  鹽基值
     */
     kg::byte_t _salt;
-
+public:
     /**
     *   \brief  返回 鹽 長度
     */
@@ -42,7 +42,7 @@ private:
     {
         return 3;
     }
-public:
+
     /**
     *   \brief  構造
     *   \param salt 鹽基值
