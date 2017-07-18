@@ -1,0 +1,4 @@
+# depslib dependency file v1.0
+1500284096 source:f:\lib\c++\kg-cpp\test\kg\crypto\k3xsx_salt_t_test\main.cpp
+	<gtest/gtest.h>
+

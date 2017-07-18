@@ -1,11 +1,24 @@
 # depslib dependency file v1.0
-1500100084 source:f:\lib\c++\kg-cpp\test\kg\bytes\buffer_t_test\main.cpp
+1500105532 source:f:\lib\c++\kg-cpp\test\kg\bytes\buffer_t_test\main.cpp
 	<gtest/gtest.h>
-	<kg/bytes/type.hpp>
+	<kg/bytes/fragmentation.hpp>
+	<kg/bytes/buffer.hpp>
 
 1500100543 f:\lib\c++\kg-cpp\include\kg\bytes\type.hpp
 	"../types.hpp"
 
 1500100530 f:\lib\c++\kg-cpp\include\kg\types.hpp
 	<cstdint>
+
+1500104366 f:\lib\c++\kg-cpp\include\kg\bytes\fragmentation.hpp
+	"../types.hpp"
+	"../allocator.hpp"
+
+1500104031 f:\lib\c++\kg-cpp\include\kg\allocator.hpp
+
+1500105566 f:\lib\c++\kg-cpp\include\kg\bytes\buffer.hpp
+	<list>
+	<boost/foreach.hpp>
+	<boost/smart_ptr.hpp>
+	"fragmentation.hpp"
 
