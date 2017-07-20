@@ -26,7 +26,7 @@ namespace kg
 		/**
 		*	\brief 釋放動態分配的內存 通常是一個 delete
 		*/
-		inline void destory(T* p)const
+		inline void destroy(T* p)const
 		{
 			delete p;
 		}
@@ -41,7 +41,7 @@ namespace kg
 		/**
 		*	\brief 釋放動態分配的數組 通常是一個 delete []
 		*/
-		inline void destory_array(T* p)const
+		inline void destroy_array(T* p)const
 		{
 			delete[] p;
 		}

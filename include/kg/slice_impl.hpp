@@ -54,7 +54,7 @@ namespace kg
 			{
 				if(_p)
 				{
-					_alloc.destory_array(_p);
+					_alloc.destroy_array(_p);
 				}
 			}
 		};
