@@ -13,6 +13,13 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/xpressive/xpressive_dynamic.hpp>
 
+#define KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NO_MODULE_NAME		"module name can't be empty"
+#define KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NO_MODULES			"_g_kg_modules not define"
+#define KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NOT_LOADER			"_g_kg_modules.%s.loader not define"
+#define KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NOT_LIBS			"_g_kg_modules.%s.libs not define"
+#define KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NO_LOADER			"module loader not define -- [%s]"
+#define KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NO_LOADER_MODULE	"[%s] module can't found -- [%s]"
+#define KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NO_MODULE			"module can't found -- [%s]"
 namespace kg
 {
 	namespace scripts
@@ -33,6 +40,14 @@ namespace kg
 		*
 		*	module 同時增加了一個全局 變量 _g_kg_modules 用於保存已經加載的 模塊
 		*		不要手動 操作 _g_kg_modules 此處 只是提醒使用者 不要 覆蓋了 全局的 _g_kg_modules
+		*		_g_kg_modules:{
+		*			js:{
+		*				loader:加載器指針,
+		*				libs:已加載模塊,
+		*			},
+		*			c:{...},
+		*			....,
+		*		}
 		*
 		*	模塊
 		*		模塊是 一個 返回值是 object 的 function
@@ -173,7 +188,9 @@ namespace kg
 			{
 				if(!duk_is_string(ctx,0))
 				{
-					return 0;
+					duk_push_string(ctx,KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NO_MODULE_NAME);
+					duk_throw(ctx);
+					//return 0;
 				}
 
 				//module_type
@@ -189,20 +206,26 @@ namespace kg
 
 				if(!duk_get_global_string(ctx,"_g_kg_modules"))
 				{
-					return 0;
+					duk_push_string(ctx,KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NO_MODULES);
+					duk_throw(ctx);
+					//return 0;
 				}
 				if(key)
 				{
 					//js loader obj
 					if(!duk_get_prop_string(ctx,-1,key))
 					{
-						return 0;
+						duk_push_sprintf(ctx,KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NO_LOADER,key);
+						duk_throw(ctx);
+						//return 0;
 					}
 
 					//libs
 					if(!duk_get_prop_string(ctx,-1,"libs"))
 					{
-						return 0;
+						duk_push_sprintf(ctx,KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NOT_LIBS,key);
+						duk_throw(ctx);
+						//return 0;
 					}
 					if(duk_get_prop_string(ctx,-1,pkg))
 					{
@@ -214,16 +237,26 @@ namespace kg
 					//loader 指針
 					if(!duk_get_prop_string(ctx,-2,"loader"))
 					{
-						return 0;
+						duk_push_sprintf(ctx,KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NOT_LOADER,key);
+						duk_throw(ctx);
+						//return 0;
 					}
 					modules::loader_i* loader = (modules::loader_i*)duk_get_pointer(ctx,-1);
 					if(!loader)
 					{
-						return 0;
+						duk_push_sprintf(ctx,KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NOT_LOADER,key);
+						duk_throw(ctx);
+						//return 0;
 					}
 					duk_pop(ctx);
 
-					return import_pkg(ctx,loader,pkg);
+					if(import_pkg(ctx,loader,pkg))
+					{
+						return 1;
+					}
+
+					duk_push_sprintf(ctx,KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NO_LOADER_MODULE,key,pkg);
+					duk_throw(ctx);
 				}
 				else
 				{
@@ -271,8 +304,10 @@ namespace kg
 					}
 					duk_pop(ctx);
 				}
-				duk_pop(ctx);
-				return 0;
+				duk_push_sprintf(ctx,KG_SCRIPTS_DUKTAPE_EXTRAS_MODULES_ERROR_NO_MODULE,pkg);
+				duk_throw(ctx);
+				//duk_pop(ctx);
+				//return 0;
 			}
 
 			/**

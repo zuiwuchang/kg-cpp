@@ -540,7 +540,7 @@ int main(int argc, char* argv[])
 		std::cout<<"***	eval_file	***\n";
 		if(!duk.peval_file_noresult("a.js"))
 		{
-			std::cout<<0<<"\n";
+			std::cout<<"peval_file_noresult error"<<"\n";
 		}
 
 		std::cout<<"\n\n";

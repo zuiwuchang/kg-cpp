@@ -1,0 +1,9 @@
+c模塊 需要導出一個 
+duk_ret_t kg_duk_package(duk_context* ctx){
+	...
+	return 1;
+}
+函數
+
+kg_duk_package 返回一個 duk 函數 func
+func 被調用時 返回 模塊 object
