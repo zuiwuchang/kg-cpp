@@ -31,9 +31,9 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add option="-ftemplate-backtrace-limit=0" />
 		</Compiler>
 		<Linker>
-			<Add option="-lgtest" />
 			<Add option="-lpthread" />
 			<Add option="-lboost_system" />
 			<Add option="-lboost_thread" />

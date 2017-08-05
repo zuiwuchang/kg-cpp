@@ -18,8 +18,10 @@ func main() {
 	}
 	defer c.Close()
 
-	buf := make([]byte, BufferLen)
-	c.Read(buf)
+	//c.Write([]byte("this is cerberus"))
 
-	fmt.Println("ok")
+	buf := make([]byte, BufferLen)
+	_, e = c.Read(buf)
+
+	fmt.Println(e)
 }
