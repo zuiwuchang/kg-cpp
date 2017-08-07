@@ -266,7 +266,6 @@ namespace net
 
             if(ec)
             {
-            	std::cout<<ec<<" "<<"\n";
                 close(client->sock);
                 return;
             }

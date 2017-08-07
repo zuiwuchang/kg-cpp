@@ -61,13 +61,13 @@ int main(int argc, char* argv[])
         {
             auto endpoint = sock->remote_endpoint();
             std::string* str = new std::string(endpoint.address().to_string() + ":" + boost::lexical_cast<std::string>(endpoint.port()));
-            std::cout<<"one in : "<<*str<<std::endl;
+            //std::cout<<"one in : "<<*str<<std::endl;
             return str;
         });
         //銷毀 session
         cnf->destroy_session([](kg::net::socket_spt sock,session_t str)
         {
-            std::cout<<"one out : "<<*str<<std::endl;
+            //std::cout<<"one out : "<<*str<<std::endl;
             delete str;
         });
 
@@ -97,15 +97,15 @@ int main(int argc, char* argv[])
             {
             case CMD_ECHO:
             	//return echo
-
+				async_write(sock,slice);
                 break;
             case CMD_EXIT:
             	//close client
                 return false;
             default:
-            	slice_t data(HEADER_SIZE+CMD_SIZE);
-
             	//return unkow
+            	slice_t data(HEADER_SIZE+CMD_SIZE);
+            	async_write(sock,slice,kg::uint16_t(CMD_UNKNOW));
                 break;
             }
             return true;
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
         //監聽
         std::string addr = ":1102";
         service_t s(addr,cnf);
-        std::cout<<"work at "<<addr<<std::endl;
+        //std::cout<<"work at "<<addr<<std::endl;
 
         //運行
         s.run();

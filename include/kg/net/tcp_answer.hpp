@@ -312,7 +312,7 @@ private:
             //內存不足 等待一秒後 重新 post
             std::cerr<<"tcp_answer_t::post_accept bad_alloc";
 
-            _timer.expires_from_now(boost::posix_time::seconds(1));
+            _timer.expires_from_now(boost::posix_time::milliseconds(10));
             _timer.async_wait(boost::bind(&tcp_answer_t::handler_timer_accept,this,_1,info));
         }
     }
