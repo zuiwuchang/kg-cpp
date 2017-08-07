@@ -10,7 +10,7 @@ namespace kg
 namespace net
 {
 	/**
-    *	\brief 響應 服務器
+    *	\brief private 響應 服務器
     *
     */
     template<typename T>

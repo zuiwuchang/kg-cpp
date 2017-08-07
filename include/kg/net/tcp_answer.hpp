@@ -68,7 +68,7 @@ public:
     *
     *	\exception class std::bad_alloc
     *	\exception class boost::system::system_error
-    *	\exception class bad_listen_address_t
+    *	\exception class bad_address_t
     *
     *	\param addr		形如 :port XXX:port 的監聽地址
     *	\param cnf		服務器配置

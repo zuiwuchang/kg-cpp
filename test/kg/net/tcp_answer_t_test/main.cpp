@@ -1,7 +1,10 @@
+#include <gtest/gtest.h>
 #include <kg/net/tcp_answer.hpp>
+#include <kg/net/tcp_answer_client.hpp>
 
 typedef std::string* session_t;
 typedef kg::net::tcp_answer_t<session_t> service_t;
+typedef kg::net::tcp_answer_client_t<session_t> client_t;
 
 typedef service_t::configure_t configure_t;
 typedef service_t::configure_spt configure_spt;
@@ -18,25 +21,25 @@ typedef configure_t::slice_t slice_t;
 #define CMD_UNKNOW	666
 void async_write_handler(const boost::system::error_code& e,kg::net::socket_spt sock,slice_t slice)
 {
-	if(e)
-	{
-		//出錯 關閉 連接
-		boost::system::error_code ec;
-		sock->shutdown(boost::asio::ip::tcp::socket::shutdown_both,ec);
+    if(e)
+    {
+        //出錯 關閉 連接
+        boost::system::error_code ec;
+        sock->shutdown(boost::asio::ip::tcp::socket::shutdown_both,ec);
         sock->close(ec);
-		return;
-	}
+        return;
+    }
 
 }
 void async_write(kg::net::socket_spt sock,slice_t slice,kg::uint16_t cmd = 0)
 {
-	if(cmd)
-	{
-		kg::uint16_t* ptr = (kg::uint16_t*)slice.get();
-		*ptr = 1102;
-		*(ptr + 1) = (kg::uint16_t)slice.size();
-		*(ptr + 2) = cmd;
-	}
+    if(cmd)
+    {
+        kg::uint16_t* ptr = (kg::uint16_t*)slice.get();
+        *ptr = 1102;
+        *(ptr + 1) = (kg::uint16_t)slice.size();
+        *(ptr + 2) = cmd;
+    }
 
     sock->async_write_some(boost::asio::buffer(slice.get(),slice.size()),
                            boost::bind(async_write_handler,
@@ -45,6 +48,21 @@ void async_write(kg::net::socket_spt sock,slice_t slice,kg::uint16_t cmd = 0)
                                        slice
                                       )
                           );
+}
+kg::uint32_t reader_header(kg::byte_t* b,std::size_t n)
+{
+    kg::uint16_t* ptr = (kg::uint16_t*)b;
+    if(*ptr != 1102)
+    {
+        return 0;
+    }
+
+    kg::uint32_t len = (kg::uint32_t)(*(ptr + 1));
+    if(len < MIN_MSG_SIZE || len > MAX_MSG_SIZE)
+    {
+        return 0;
+    }
+    return len;
 }
 int main(int argc, char* argv[])
 {
@@ -72,21 +90,7 @@ int main(int argc, char* argv[])
         });
 
         //解析消息
-        cnf->reader_header([](kg::byte_t* b,std::size_t n)->kg::uint32_t
-        {
-            kg::uint16_t* ptr = (kg::uint16_t*)b;
-            if(*ptr != 1102)
-            {
-                return 0;
-            }
-
-            kg::uint32_t len = (kg::uint32_t)(*(ptr + 1));
-            if(len < MIN_MSG_SIZE || len > MAX_MSG_SIZE)
-            {
-                return 0;
-            }
-            return len;
-        });
+        cnf->reader_header(reader_header);
 
         //響應 消息
         cnf->message([](kg::net::socket_spt sock,session_t str,slice_t slice)
@@ -96,16 +100,16 @@ int main(int argc, char* argv[])
             switch(*ptr)
             {
             case CMD_ECHO:
-            	//return echo
-				async_write(sock,slice);
+                //return echo
+                async_write(sock,slice);
                 break;
             case CMD_EXIT:
-            	//close client
+                //close client
                 return false;
             default:
-            	//return unkow
-            	slice_t data(HEADER_SIZE+CMD_SIZE);
-            	async_write(sock,slice,kg::uint16_t(CMD_UNKNOW));
+                //return unkow
+                slice_t data(HEADER_SIZE+CMD_SIZE);
+                async_write(sock,slice,kg::uint16_t(CMD_UNKNOW));
                 break;
             }
             return true;
@@ -120,17 +124,35 @@ int main(int argc, char* argv[])
         s.run();
 
 
-        //s.stop();
-
-        //s.join();
-        std::string cmd;
-        while(true)
+        bool testing = true;
+        //testing = false;
+        if(testing)
         {
-            std::cin>>cmd;
-            if(cmd == "exit")
+            //運行測試 客戶端
+            testing::InitGoogleTest(&argc, argv);
+            //運行 全部測試
+            rs = RUN_ALL_TESTS();
+            if(rs == 0)
+            {
+                //s.join();
+                s.stop();
+            }
+            else
             {
                 s.stop();
-                break;
+            }
+        }
+        else
+        {
+            std::string cmd;
+            while(true)
+            {
+                std::cin>>cmd;
+                if(cmd == "exit")
+                {
+                    s.stop();
+                    break;
+                }
             }
         }
     }
@@ -145,6 +167,37 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-
     return rs;
+}
+
+TEST(ConnTest, HandleNoneZeroInput)
+{
+    client_t::configure_spt cnf = boost::make_shared<client_t::configure_t>(HEADER_SIZE);
+    //創建 session
+    cnf->create_session([](kg::net::socket_spt sock)
+    {
+        auto endpoint = sock->local_endpoint();
+        std::string* str = new std::string(endpoint.address().to_string() + ":" + boost::lexical_cast<std::string>(endpoint.port()));
+        //std::cout<<"connect by : "<<*str<<std::endl;
+        return str;
+    });
+    //銷毀 session
+    cnf->destroy_session([](kg::net::socket_spt sock,session_t str)
+    {
+        //std::cout<<"close : "<<*str<<std::endl;
+        delete str;
+    });
+
+    //解析消息
+    cnf->reader_header(reader_header);
+
+    //連接服務器
+    std::string addr = "127.0.0.1:1102";
+    client_t c(addr,cnf);
+
+    boost::system::error_code ec;
+    c.connect(ec);
+    EXPECT_FALSE(ec);
+
+
 }

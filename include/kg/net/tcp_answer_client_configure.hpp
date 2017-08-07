@@ -1,5 +1,5 @@
-#ifndef KG_NET_TCP_ANSWER_CONFIGURE_HEADER_HPP
-#define KG_NET_TCP_ANSWER_CONFIGURE_HEADER_HPP
+#ifndef KG_NET_TCP_ANSWER_CLIENT_CONFIGURE_HEADER_HPP
+#define KG_NET_TCP_ANSWER_CLIENT_CONFIGURE_HEADER_HPP
 
 
 #include "types.hpp"
@@ -10,12 +10,12 @@ namespace kg
 namespace net
 {
 	/**
-	*	\brief tcp_answer_t 的配置
+	*	\brief tcp_answer_client_t 的配置
 	*
 	*	\param T	一個支持copy語義的 自定義 對象 可以用來存儲自定義的 session 數據
 	*/
 	template<typename T>
-	class tcp_answer_configure_t
+	class tcp_answer_client_configure_t
 		:boost::noncopyable
 	{
 	public:
@@ -25,15 +25,9 @@ namespace net
 		*/
 		typedef T session_t;
 
-		typedef tcp_answer_configure_t type_t;
+		typedef tcp_answer_client_configure_t type_t;
 		typedef boost::shared_ptr<type_t> type_spt;
 	private:
-		/**
-		*	\brief tcp 超時 時間
-		*
-		*/
-		boost::posix_time::time_duration _timeout;
-
 		/**
 		*	\brief recv 緩衝區大小
 		*
@@ -45,21 +39,14 @@ namespace net
 		*
 		*/
 		kg::uint32_t _header_size;
-		/**
-		*	\brief 將tcp分配到不同 cpu時 忽略的大小 compare 最小取值爲 1
-		*
-		*/
-		std::size_t _compare;
 	public:
 		/**
 		*	\brief 初始化一個默認的 服務器 配置
 		*
 		*	\param headerSize	消息頭長度
 		*/
-		tcp_answer_configure_t(kg::uint32_t headerSize)
-			:_timeout(boost::posix_time::hours(1))
-			,_header_size(headerSize)
-			,_compare(50)
+		tcp_answer_client_configure_t(kg::uint32_t headerSize)
+			:_header_size(headerSize)
 			,_buffer_size(1024)
 		{
 
@@ -99,45 +86,6 @@ namespace net
 			_header_size = n;
 		}
 
-		/**
-		*	\brief 返回 tcp 超時時間
-		*
-		*/
-		inline boost::posix_time::time_duration timeout()const
-		{
-			return _timeout;
-		}
-		/**
-		*	\brief 設置 tcp 超時時間
-		*
-		*/
-		inline void timeout(boost::posix_time::time_duration duration)
-		{
-			_timeout = duration;
-		}
-
-		/**
-		*	\brief 將tcp分配到不同 cpu時 忽略的大小 compare 最小取值爲 1
-		*
-		*/
-		inline std::size_t compare()const
-		{
-			return _compare;
-		}
-		/**
-		*	\brief 將tcp分配到不同 cpu時 忽略的大小 compare 最小取值爲 1
-		*
-		*/
-		inline void compare(std::size_t n)
-		{
-			if(n < 1)
-			{
-				return;
-			}
-			_compare = n;
-		}
-
-
 	public:
 		/**
 		*	\brief 如何創建 session 默認 session_t()
@@ -158,16 +106,10 @@ namespace net
 		typedef boost::function<kg::uint32_t(kg::byte_t*,std::size_t)> reader_header_bft;
 
 		typedef kg::slice_t<kg::byte_t> slice_t;
-		/**
-		*	\brief 當收到消息時 回調 返回 false 將斷開 連接
-		*
-		*/
-		typedef boost::function<bool(socket_spt,session_t,slice_t)> message_bft;
 	private:
 		create_session_bft _create_session;
 		destroy_session_bft _destroy_session;
 		reader_header_bft _reader_header;
-		message_bft _message;
 	public:
 		/**
 		*	\brief 設置 創建 session 回調 在新連接創建成功時 回調此函數 默認 T()
@@ -219,26 +161,8 @@ namespace net
 		{
 			return _reader_header;
 		}
-
-		/**
-		*	\brief 設置 收到消息時 回調 返回 false 將斷開 連接
-		*
-		*/
-		inline void message(message_bft bf)
-		{
-			_message = bf;
-		}
-
-		/**
-		*	\brief 返回 當收到消息時 回調 返回 false 將斷開 連接
-		*
-		*/
-		inline message_bft message()const
-		{
-			return _message;
-		}
 	};
 
 };
 };
-#endif	//KG_NET_TCP_ANSWER_CONFIGURE_HEADER_HPP
+#endif	//KG_NET_TCP_ANSWER_CLIENT_CONFIGURE_HEADER_HPP

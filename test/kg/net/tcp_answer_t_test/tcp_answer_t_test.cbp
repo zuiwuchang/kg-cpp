@@ -35,6 +35,7 @@
 		</Compiler>
 		<Linker>
 			<Add option="-lpthread" />
+			<Add option="-lgtest" />
 			<Add option="-lboost_system" />
 			<Add option="-lboost_thread" />
 		</Linker>
