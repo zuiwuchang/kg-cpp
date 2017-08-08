@@ -6,8 +6,12 @@
 	<stdarg.h>
 	<string.h>
 
+1498771194 
+
 1492259323 /home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/duktape.h
 	"duk_config.h"
+
+1498771194 g.h"
 
 1492259323 /home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/duk_config.h
 	<sys/isa_defs.h>
@@ -96,10 +100,14 @@
 	<exception>
 	<inttypes.h>
 
+1498771194 h>
+
 1498793268 source:/home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/main.cpp
 	<gtest/gtest.h>
 	<kg/scripts/duktape.hpp>
 	<kg/scripts/duktape_extras.hpp>
+
+1498771194 s/duktape_extras.hpp>
 
 1492259323 source:/home/king/program/lib/c++/kg-cpp/include/kg/scripts/duktape/duktape.c
 	"duktape.h"
@@ -296,6 +304,108 @@
 	<inttypes.h>
 
 1498771194 source:f:\lib\c++\kg-cpp\test\kg\scripts\duktape_t_test\main.cpp
+	<gtest/gtest.h>
+	<kg/scripts/duktape.hpp>
+	<kg/scripts/duktape_extras.hpp>
+
+1498771194 source:/media/king/project/lib/c++/kg-cpp/include/kg/scripts/duktape/duktape.c
+	"duktape.h"
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<string.h>
+
+1498771194 /media/king/project/lib/c++/kg-cpp/include/kg/scripts/duktape/duktape.h
+	"duk_config.h"
+
+1498771194 /media/king/project/lib/c++/kg-cpp/include/kg/scripts/duktape/duk_config.h
+	<sys/isa_defs.h>
+	<TargetConditionals.h>
+	<architecture/byte_order.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<sys/types.h>
+	<machine/endian.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<sys/types.h>
+	<sys/endian.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<sys/types.h>
+	<sys/endian.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<time.h>
+	<time.h>
+	<time.h>
+	<windows.h>
+	<windows.h>
+	<endian.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<sys/types.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<sys/types.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<sys/types.h>
+	<endian.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<stdint.h>
+	<sys/types.h>
+	<endian.h>
+	<stdint.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<sys/types.h>
+	<ast/endian.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<sys/types.h>
+	<endian.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<sys/types.h>
+	<endian.h>
+	<sys/param.h>
+	<sys/time.h>
+	<time.h>
+	<time.h>
+	<sys/time.h>
+	<time.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdarg.h>
+	<setjmp.h>
+	<stddef.h>
+	<math.h>
+	<limits.h>
+	<stdint.h>
+	<exception>
+	<inttypes.h>
+
+1498776608 source:/media/king/project/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/main.cpp
 	<gtest/gtest.h>
 	<kg/scripts/duktape.hpp>
 	<kg/scripts/duktape_extras.hpp>
