@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/libmy" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/my" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -18,7 +18,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="../libmy" prefix_auto="1" extension_auto="1" />
+				<Option output="../my" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -36,8 +36,6 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 			<Add option="-fPIC" />
-			<Add option="-shared" />
-			<Add option="-fvisibility=hidden" />
 		</Compiler>
 		<Unit filename="duk_config.h" />
 		<Unit filename="duktape.c">

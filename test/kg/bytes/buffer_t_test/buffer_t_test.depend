@@ -22,3 +22,23 @@
 	<boost/smart_ptr.hpp>
 	"fragmentation.hpp"
 
+1501903450 source:/home/king/program/lib/c++/kg-cpp/test/kg/bytes/buffer_t_test/main.cpp
+	<gtest/gtest.h>
+	<kg/bytes/fragmentation.hpp>
+	<kg/bytes/buffer.hpp>
+
+1501903339 /home/king/program/lib/c++/kg-cpp/include/kg/bytes/fragmentation.hpp
+	"../types.hpp"
+	"../allocator.hpp"
+
+1500521836 /home/king/program/lib/c++/kg-cpp/include/kg/types.hpp
+	<cstdint>
+
+1500521836 /home/king/program/lib/c++/kg-cpp/include/kg/allocator.hpp
+
+1501903344 /home/king/program/lib/c++/kg-cpp/include/kg/bytes/buffer.hpp
+	<list>
+	<boost/foreach.hpp>
+	<boost/smart_ptr.hpp>
+	"fragmentation.hpp"
+

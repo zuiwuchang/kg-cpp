@@ -4,6 +4,7 @@
 	<ActiveTarget name="Release" />
 	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
+<<<<<<< HEAD
 			<Cursor1 position="9845" topLine="425" />
 		</Cursor>
 		<Folding>
@@ -13,6 +14,9 @@
 	<File name="../../../../include/kg/scripts/duktape/duktape.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="758041" topLine="18078" />
+=======
+			<Cursor1 position="11844" topLine="515" />
+>>>>>>> 260d3fbacb913e2f2edebab9623d8ce0298bd9a4
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

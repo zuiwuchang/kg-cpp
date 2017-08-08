@@ -4,9 +4,10 @@
 
 TEST(TypeFragmentation, HandleNoneZeroInput)
 {
+
     //write
     int size = 5;
-    kg::bytes::fragmentation_t<> f0(size);
+    kg::bytes::basic_fragmentation_t<> f0(size);
 
 
 
@@ -58,9 +59,11 @@ TEST(TypeFragmentation, HandleNoneZeroInput)
     EXPECT_EQ(f0.capacity(),size);
 
     f0.reset();
+
     EXPECT_EQ(f0.get_free(),0);
     EXPECT_EQ(f0.size(),0);
     EXPECT_EQ(f0.capacity(),0);
+
 
 }
 TEST(TypeBuffer, HandleNoneZeroInput)

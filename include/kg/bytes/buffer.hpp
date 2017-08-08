@@ -13,7 +13,7 @@ namespace bytes
 {
 
 /**
-*   \brief k0::byte_t 流緩衝區
+*   \brief kg::byte_t 流緩衝區
 *
 *   一個類似 golang bytes.Buffer 的 io 緩衝區
 */
@@ -22,7 +22,7 @@ class buffer_t
 {
 private:
 
-	typedef fragmentation_t<Alloc> fragmentation_t;
+	typedef basic_fragmentation_t<Alloc> fragmentation_t;
 	/**
 	*   \brief 分片定義
 	*/

@@ -35,6 +35,7 @@
 		</Compiler>
 		<Linker>
 			<Add option="-lgtest" />
+			<Add option="-lpthread" />
 		</Linker>
 		<Unit filename="main.cpp" />
 		<Extensions>

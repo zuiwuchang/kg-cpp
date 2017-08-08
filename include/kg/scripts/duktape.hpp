@@ -4,6 +4,16 @@
 
 #include <boost/smart_ptr.hpp>
 
+/**
+*	\def	KG_SCRIPTS_DUKTAPE_MAX_SIZE
+*	\brief	能夠加載的最大js 尺寸
+*/
+#ifndef KG_SCRIPTS_DUKTAPE_MAX_SIZE
+#define KG_SCRIPTS_DUKTAPE_MAX_SIZE 1024 * 1024 * 64
+#endif // KG_SCRIPTS_DUKTAPE_MAX_SIZE
+
+#include <fstream>
+
 namespace kg
 {
 	namespace scripts
@@ -1302,6 +1312,231 @@ namespace kg
 				return 0 == duk_peval_lstring_noresult(_ctx.get(),str.data(),str.size());
 			}
 
+
+			/*		eval file	*/
+			/**
+			*	\brief	將棧頂 作爲檔案路徑 出棧 執行 eval file 操作 並且 將 eval 返回值 入棧\n
+			*	... file -> ... result\n
+			*
+			*/
+			inline void eval_file()
+			{
+				std::string file = duk_get_string(_ctx.get(),-1);
+				duk_pop(_ctx.get());
+				eval_file(file.c_str());
+			}
+			/**
+			*	\brief	執行 eval file 操作 並且 將 eval 返回值 入棧\n
+			*	... -> ... result\n
+			*
+			*/
+			void eval_file(const char* file)
+			{
+				duk_context* ctx = _ctx.get();
+
+				std::ifstream inf(file,std::ios::in | std::ios::binary);
+				if(!inf.is_open())
+				{
+					duk_push_error_object(ctx, DUK_ERR_TYPE_ERROR, "eval cann't open file : %s", file);
+					duk_throw(ctx);
+					return;
+				}
+
+				inf.seekg(0,std::ios::end);
+				std::istream::pos_type size = inf.tellg();
+				if(size > KG_SCRIPTS_DUKTAPE_MAX_SIZE)
+				{
+					duk_push_error_object(ctx, DUK_ERR_TYPE_ERROR, "eval file size must small than KG_SCRIPTS_DUKTAPE_MAX_SIZE");
+					duk_throw(ctx);
+					return;
+				}
+
+				inf.seekg(0,std::ios::beg);
+				char* buf = (char*)malloc(size);
+				if(!buf)
+				{
+					duk_push_error_object(ctx, DUK_ERR_TYPE_ERROR, "eval malloc error");
+					duk_throw(ctx);
+					return;
+				}
+				inf.read(buf,size);
+				if(duk_peval_lstring(ctx,buf,size) != 0)
+				{
+					free(buf);
+
+					std::string emsg = duk_safe_to_string(ctx,-1);
+					duk_pop(ctx);
+
+					duk_push_error_object(ctx, DUK_ERR_TYPE_ERROR, emsg.c_str());
+					duk_throw(ctx);
+					return;
+				}
+				free(buf);
+			}
+			/**
+			*	\brief	執行 eval file 操作 並且 將 eval 返回值 入棧\n
+			*	... -> ... result\n
+			*
+			*/
+			inline void eval_file(const std::string& file)
+			{
+				eval_file(file.c_str());
+			}
+
+			/**
+			*	\brief	將棧頂 作爲檔案路徑 出棧 執行 eval file 操作\n
+			*	... file -> ...\n
+			*
+			*/
+			inline void eval_file_noresult()
+			{
+				std::string file = duk_get_string(_ctx.get(),-1);
+				duk_pop(_ctx.get());
+				eval_file_noresult(file.c_str());
+			}
+			/**
+			*	\brief	執行 eval file\n
+			*	... -> ...\n
+			*
+			*/
+			inline void eval_file_noresult(const char* file)
+			{
+				duk_context* ctx = _ctx.get();
+				eval_file(file);
+				duk_pop(ctx);
+			}
+			/**
+			*	\brief	執行 eval file 操作\n
+			*	... -> ...\n
+			*
+			*/
+			inline void eval_file_noresult(const std::string& file)
+			{
+				eval_file_noresult(file.c_str());
+			}
+
+
+			/**
+			*	\brief	在 安全模式下 將棧頂 作爲檔案路徑 出棧 執行 eval file 操作 並且 將 eval 返回值 入棧\n
+			*	... file -> ... result	(if success, return true)\n
+			*	... file -> ... error		(if failure, return false)\n
+			*
+			*/
+			inline bool peval_file()
+			{
+				std::string file = duk_get_string(_ctx.get(),-1);
+				duk_pop(_ctx.get());
+				return peval_file(file.c_str());
+			}
+			/**
+			*	\brief	在 安全模式下 執行 eval file 操作 並且 將 eval 返回值 入棧\n
+			*	... -> ... result	(if success, return true)\n
+			*	... -> ... error	(if failure, return false)\n
+			*
+			*/
+			bool peval_file(const char* file)
+			{
+				duk_context* ctx = _ctx.get();
+
+				std::ifstream inf(file,std::ios::in | std::ios::binary);
+				if(!inf.is_open())
+				{
+					duk_push_error_object(ctx, DUK_ERR_TYPE_ERROR, "eval cann't open file : %s", file);
+					return false;
+				}
+
+				inf.seekg(0,std::ios::end);
+				std::istream::pos_type size = inf.tellg();
+				if(size > KG_SCRIPTS_DUKTAPE_MAX_SIZE)
+				{
+					duk_push_error_object(ctx, DUK_ERR_TYPE_ERROR, "eval file size must small than KG_SCRIPTS_DUKTAPE_MAX_SIZE");
+					return false;
+				}
+
+				inf.seekg(0,std::ios::beg);
+				char* buf = (char*)malloc(size);
+				if(!buf)
+				{
+					duk_push_error_object(ctx, DUK_ERR_TYPE_ERROR, "eval malloc error");
+					return false;
+				}
+				inf.read(buf,size);
+				if(duk_peval_lstring(ctx,buf,size) != 0)
+				{
+					free(buf);
+					return false;
+				}
+				free(buf);
+				return true;
+			}
+			/**
+			*	\brief	在 安全模式下 執行 eval file 操作 並且 將 eval 返回值 入棧\n
+			*	... -> ... result	(if success, return true)\n
+			*	... -> ... error	(if failure, return false)\n
+			*
+			*/
+			inline bool peval_file(const std::string& file)
+			{
+				return peval_file(file.c_str());
+			}
+
+			/**
+			*	\brief	在 安全模式下 將棧頂 作爲檔案路徑 出棧 執行 eval file 操作 \n
+			*	... file -> ...\n
+			*
+			*/
+			inline bool peval_file_noresult()
+			{
+				std::string file = duk_get_string(_ctx.get(),-1);
+				duk_pop(_ctx.get());
+				return peval_file_noresult(file.c_str());
+			}
+			/**
+			*	\brief	在 安全模式下 執行 eval file 操作\n
+			*	... -> ...\n
+			*
+			*/
+			bool peval_file_noresult(const char* file)
+			{
+				duk_context* ctx = _ctx.get();
+
+				std::ifstream inf(file,std::ios::in | std::ios::binary);
+				if(!inf.is_open())
+				{
+					return false;
+				}
+
+				inf.seekg(0,std::ios::end);
+				std::istream::pos_type size = inf.tellg();
+				if(size > KG_SCRIPTS_DUKTAPE_MAX_SIZE)
+				{
+					return false;
+				}
+
+				inf.seekg(0,std::ios::beg);
+				char* buf = (char*)malloc(size);
+				if(!buf)
+				{
+					return false;
+				}
+				inf.read(buf,size);
+				if(duk_peval_lstring_noresult(ctx,buf,size) != 0)
+				{
+					free(buf);
+					return false;
+				}
+				free(buf);
+				return true;
+			}
+			/**
+			*	\brief	在 安全模式下 執行 eval file 操作\n
+			*	... -> ...\n
+			*
+			*/
+			inline bool peval_file_noresult(const std::string& file)
+			{
+				return peval_file_noresult(file.c_str());
+			}
 
 			/*		call		*/
 			/**

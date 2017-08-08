@@ -516,16 +516,16 @@ int main(int argc, char* argv[])
 		putenv("KG_DUK_C_PATH=/lib/kg-duk-c:/usr/lib/kg-duk-c:.");
 		if(!duk.peval(R"(
 						alert("\n\n******		c module test		******")
-						var m = kg_import("c/liblibmy");
+						var m = kg_import("c/libmy");
 						alert("name =",m.GetName());
 						m.SetName("kate");
 						alert("name =",m.GetName());
-						var m1 = kg_import("c/liblibmy","c");
+						var m1 = kg_import("c/libmy","c");
 						alert("m == m1",m==m1);
 						var mj = kg_import("js/my");
 						alert(mj,"mj != m",mj != m);
 
-						var m2 = kg_import("c/liblibmy");
+						var m2 = kg_import("c/libmy");
 						alert("m == m2",m==m2);
 						alert("name =",m2.GetName());
 		)"))
@@ -535,6 +535,13 @@ int main(int argc, char* argv[])
 		}
 		duk.pop();
 #endif // WIN32
+		std::cout<<"\n\n";
+
+		std::cout<<"***	eval_file	***\n";
+		if(!duk.peval_file_noresult("a.js"))
+		{
+			std::cout<<"peval_file_noresult error"<<"\n";
+		}
 
 		std::cout<<"\n\n";
 		duk.dump_context_stdout();

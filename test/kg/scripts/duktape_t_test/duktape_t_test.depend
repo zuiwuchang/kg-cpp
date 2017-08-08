@@ -100,9 +100,13 @@
 	<exception>
 	<inttypes.h>
 
+<<<<<<< HEAD
 1498771194 h>
 
 1498793268 source:/home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/main.cpp
+=======
+1500689130 source:/home/king/program/lib/c++/kg-cpp/test/kg/scripts/duktape_t_test/main.cpp
+>>>>>>> 260d3fbacb913e2f2edebab9623d8ce0298bd9a4
 	<gtest/gtest.h>
 	<kg/scripts/duktape.hpp>
 	<kg/scripts/duktape_extras.hpp>

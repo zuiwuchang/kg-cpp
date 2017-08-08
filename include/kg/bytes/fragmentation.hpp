@@ -22,7 +22,7 @@ namespace bytes
 	*	爲建立 bytes_t 緩存 提供了 方便操作的 函數
 	*/
 	template<typename Alloc = kg::allocator_t<byte_t>>
-	class fragmentation_t
+	class basic_fragmentation_t
 	{
 	private:
 		Alloc _alloc;
@@ -49,7 +49,7 @@ namespace bytes
 		/**
 		*	\brief	構造一個指定容量的 分片數據
 		*/
-		explicit fragmentation_t(const std::size_t size):
+		explicit basic_fragmentation_t(const std::size_t size):
 			_capacity(0),_offset(0),_size(0),_array(NULL)
 		{
 			if(!size)
@@ -65,13 +65,13 @@ namespace bytes
 			{
 			}
 		}
-		virtual ~fragmentation_t()
+		virtual ~basic_fragmentation_t()
 		{
 			reset();
 		}
 	private:
-		fragmentation_t(const fragmentation_t& copy);
-		fragmentation_t& operator=(const fragmentation_t& copy);
+		basic_fragmentation_t(const basic_fragmentation_t& copy);
+		basic_fragmentation_t& operator=(const basic_fragmentation_t& copy);
 	public:
 		/**
 		*	\brief 返回 分片 是否不為空
@@ -109,6 +109,7 @@ namespace bytes
 			if(_array)
 			{
 				_alloc.destroy_array(_array);
+				_array = NULL;
 			}
 		}
 
@@ -185,7 +186,7 @@ namespace bytes
 		/**
 		*	\brief 拷貝 數據
 		*
-		*	同 fragmentation_t::read \n
+		*	同 basic_fragmentation_t::read \n
 		*	被讀取的 數據 不會 從緩衝區 移除
 		*
 		*	\param bytes 待讀取數據指針
@@ -208,7 +209,7 @@ namespace bytes
 		/**
 		*	\brief 拷貝 數據
 		*
-		*	同 fragmentation_t::copy \n
+		*	同 basic_fragmentation_t::copy \n
 		*	但 跳過 緩衝區 前 skip 個 字節
 		*
 		*	\param skip 要跳過的字節數

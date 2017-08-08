@@ -3,7 +3,11 @@
 #include "loader.hpp"
 
 #include <boost/algorithm/string.hpp>
-#include <fstream>
+
+
+#ifndef KG_SCRIPTS_DUKTAPE_MAX_SIZE
+#define KG_SCRIPTS_DUKTAPE_MAX_SIZE 1024 * 1024 * 64
+#endif // KG_SCRIPTS_DUKTAPE_MAX_SIZE
 
 namespace kg
 {
@@ -99,9 +103,9 @@ namespace kg
 
 				inf.seekg(0,std::ios::end);
 				std::istream::pos_type size = inf.tellg();
-				if(size > 1024 * 1024 * 256) //256 mb
+				if(size > KG_SCRIPTS_DUKTAPE_MAX_SIZE)
 				{
-					duk_push_string(ctx,"module size must small than 256mb");
+					duk_push_string(ctx,"module size must small than KG_SCRIPTS_DUKTAPE_MAX_SIZE");
 					return false;
 				}
 
