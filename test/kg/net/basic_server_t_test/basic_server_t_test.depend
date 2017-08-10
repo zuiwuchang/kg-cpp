@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1502348658 source:/home/king/program/lib/c++/kg-cpp/test/kg/net/basic_server_t_test/main.cpp
+	<iostream>
+	<kg/net/basic_server.hpp>
+
