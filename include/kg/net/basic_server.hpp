@@ -58,7 +58,9 @@ public:
 /**
 *	\brief 使用 boost::asio 協程 實現的 tcp 服務器
 *
+*	\param T	用於關聯到 連接 的 自定義 session 型別 需要支持 copy 語義
 */
+template<typename T>
 class basic_server_t
     : boost::noncopyable
 {
@@ -68,6 +70,11 @@ public:
 	*
 	*/
     KG_TYPEDEF_TT(basic_server_t);
+    /**
+	*	\brief type_t type_spt
+	*
+	*/
+	typedef T session_t;
 private:
     //listen
     io_service_t _service;
@@ -283,7 +290,7 @@ public:
 	*	\brief 運行 服務器
 	*
 	*/
-    void run()
+    inline void run()
     {
     	post_accept();
         //KG_TRACE("work at "<<_acceptor->local_endpoint());
@@ -358,7 +365,8 @@ private:
     	boost::system::error_code ec;
     	socket_t& s = *sp;
     	//KG_TRACE("one in");
-    	if(!_connected || _connected(sp,ctx))
+    	session_t session = session_t();
+    	if(!_connected || _connected(sp,session,ctx))
 		{
 			deadline_timer_t timer(service->service);
 			try
@@ -384,7 +392,7 @@ private:
 
 					//通知 響應
 					if(_readed &&
-						!_readed(sp,buffer,n,ctx)
+						!_readed(sp,session,buffer,n,ctx)
 						)
 					{
 						break;
@@ -409,7 +417,7 @@ private:
         //KG_TRACE("one out");
 		if(_closed)
 		{
-			_closed(sp,ctx);
+			_closed(sp,session,ctx);
 		}
     }
     static void handler_timer(socket_spt sock,const boost::system::error_code& e)
@@ -428,18 +436,18 @@ public:
 	*
 	*	\return 返回 false 將 自動斷開 連接  並調用 closed 回調
 	*/
-	typedef boost::function<bool(socket_spt,boost::asio::yield_context)> connected_bft;
+	typedef boost::function<bool(socket_spt,session_t&,boost::asio::yield_context)> connected_bft;
 	/**
 	*	\brief 定義 連接斷開後 回調
 	*
 	*	\return 返回 false 將 自動斷開 連接  並調用 closed 回調
 	*/
-	typedef boost::function<void(socket_spt,boost::asio::yield_context)> closed_bft;
+	typedef boost::function<void(socket_spt,session_t&,boost::asio::yield_context)> closed_bft;
 	/**
 	*	\brief 定義 讀取到數據後 回調
 	*
 	*/
-	typedef boost::function<bool(socket_spt,kg::byte_t*,std::size_t n,boost::asio::yield_context)> readed_bft;
+	typedef boost::function<bool(socket_spt,session_t&,kg::byte_t*,std::size_t n,boost::asio::yield_context)> readed_bft;
 
 private:
 	connected_bft _connected;

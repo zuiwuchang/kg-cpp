@@ -18,7 +18,7 @@ func main() {
 
 	last := time.Now()
 
-	count := 5000
+	count := 10000
 	ch := make(chan int)
 
 	for i := 0; i < count; i++ {
