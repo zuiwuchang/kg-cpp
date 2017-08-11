@@ -15,7 +15,7 @@ namespace net
 	class bad_address_t:public std::exception
 	{
 	public:
-		virtual const char* what() const noexcept
+		virtual const char* what() const BOOST_NOEXCEPT
 		{
 			return "address is invalid";
 		}
