@@ -143,7 +143,7 @@ public:
 	*	\param size_t	消息頭 長度
 	*	\return 消息長度 如果<0 或 <headerSize 將 斷開 連接
 	*/
-	typedef boost::function<int(kg::byte_t*,std::size_t,boost::asio::yield_context)> reader_bft;
+	typedef boost::function<int(session_t&,kg::byte_t*,std::size_t,boost::asio::yield_context)> reader_bft;
 private:
 	//轉發 basic_server 回調
 	bool forward_connected(kg::net::socket_spt s,basic_session_spt& basic_session,boost::asio::yield_context ctx)
@@ -202,7 +202,7 @@ private:
 				//讀取包頭
 				if(_headerSize == 0)
 				{
-					basic.size = _reader(NULL,0,ctx);
+					basic.size = _reader(basic.session,NULL,0,ctx);
 				}
 				else
 				{
@@ -214,7 +214,7 @@ private:
 					//解析包頭
 					boost::shared_array<kg::byte_t> header(new kg::byte_t[_headerSize]);
 					buffer.copy_to(header.get(),_headerSize);
-					basic.size = _reader(header.get(),_headerSize,ctx);
+					basic.size = _reader(basic.session,header.get(),_headerSize,ctx);
 				}
 
 				//解包錯誤

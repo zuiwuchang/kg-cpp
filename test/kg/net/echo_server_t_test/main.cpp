@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 
 
         //設置 回調
-        s.reader([](kg::byte_t* b,std::size_t n,boost::asio::yield_context ctx)->int{
+        s.reader([](session_t& session,kg::byte_t* b,std::size_t n,boost::asio::yield_context ctx)->int{
 				if(n!=4)
 				{
 					return -1;
