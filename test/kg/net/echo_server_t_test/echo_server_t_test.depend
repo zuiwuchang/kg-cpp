@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1502356694 source:/home/king/program/lib/c++/kg-cpp/test/kg/net/echo_server_t_test/main.cpp
+	<iostream>
+	<kg/net/echo_server.hpp>
+

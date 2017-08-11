@@ -5,6 +5,9 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
 
+#include "../types.hpp"
+#include "../define.hpp"
+
 namespace kg
 {
 namespace net

@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="tcp_answer_t_test" />
+		<Option title="echo_client_t_test" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/tcp_answer_t_test" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/echo_client_t_test" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -16,7 +16,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/tcp_answer_t_test" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/echo_client_t_test" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -31,13 +31,13 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
-			<Add option="-ftemplate-backtrace-limit=0" />
 		</Compiler>
 		<Linker>
 			<Add option="-lpthread" />
-			<Add option="-lgtest" />
 			<Add option="-lboost_system" />
 			<Add option="-lboost_thread" />
+			<Add option="-lboost_coroutine" />
+			<Add option="-lboost_context" />
 		</Linker>
 		<Unit filename="main.cpp" />
 		<Extensions>

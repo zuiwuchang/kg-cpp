@@ -1,6 +1,0 @@
-# depslib dependency file v1.0
-1502074699 source:/home/king/program/lib/c++/kg-cpp/test/kg/net/tcp_answer_t_test/main.cpp
-	<gtest/gtest.h>
-	<kg/net/tcp_answer.hpp>
-	<kg/net/tcp_answer_client.hpp>
-
