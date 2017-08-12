@@ -54,7 +54,6 @@ public:
 /**
 *	\brief 使用 可以自動解析 read消息的 同步 tcp client
 *
-*	\param T session 型別 需要支持 copy 語義
 */
 class echo_client_t
     : boost::noncopyable
@@ -82,9 +81,6 @@ public:
 	*	\brief 初始化 服務器
 	*
 	*	\exception std::bad_alloc
-	*	\param laddr	服務器監聽地址
-	*	\param poll		連接分配cpu 輪詢計算 (每個cpu 會被分配 poll個 連接之後 才會將 連接分配到下個 cpu)
-	*	\param timeout	客戶端 未活動 斷開 超時時間(單位 秒)
 	*	\param headerSize	消息頭 長度
 	*
 	*/
