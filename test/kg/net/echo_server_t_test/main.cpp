@@ -53,11 +53,11 @@ int main(int argc, char* argv[])
 
 
 		//運行 服務
-		boost::thread thead([&s=s](){
-					s.run();
-		});
+		s.run();
 		input(s);
-		thead.join();
+
+		s.stop();
+		//s.join();
 
     }
     catch(const boost::system::system_error& e)
@@ -77,7 +77,6 @@ void input(echo_server_t & s)
 
 		if(cmd == "e")
 		{
-			s.stop();
 			break;
 		}
 	}

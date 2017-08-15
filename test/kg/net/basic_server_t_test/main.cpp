@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 				return true;
 		});
 		s.closed([](kg::net::socket_spt s,session_t& session,boost::asio::yield_context ctx){
-				std::cout<<"one out "<<session<<std::endl;
+				//std::cout<<"one out "<<session<<std::endl;
 		});
 		s.readed([](kg::net::socket_spt s,session_t& session,kg::byte_t* b,std::size_t n,boost::asio::yield_context ctx){
 				try
@@ -35,11 +35,12 @@ int main(int argc, char* argv[])
 		});
 
 		//運行 服務
-		boost::thread thead([&s=s](){
-					s.run();
-		});
+		s.run();
+
 		input(s);
-		thead.join();
+
+		s.stop();
+		s.join();
     }
     catch(const boost::system::system_error& e)
     {
@@ -58,7 +59,6 @@ void input(server_t& s)
 
 		if(cmd == "e")
 		{
-			s.stop();
 			break;
 		}
 	}
