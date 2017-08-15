@@ -77,7 +77,7 @@ public:
 	typedef T session_t;
 private:
     //listen
-    io_service_t _service;
+    io_service_spt _service;
     acceptor_spt _acceptor;
 
     //read
@@ -186,9 +186,12 @@ private:
 		//創建 asio 服務
 		try
 		{
-			//創建 監聽器
-			_acceptor = boost::make_shared<acceptor_t>(_service,boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(tmp),port));
+			//創建 asio
+			_service = boost::make_shared<io_service_t>();
 
+			//創建 監聽器
+			_acceptor = boost::make_shared<acceptor_t>(*_service,boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(tmp),port));
+			
 			//創建 響應 服務器
 			std::size_t n = boost::thread::hardware_concurrency();
 			for(std::size_t i=0; i<n; ++i)
@@ -222,7 +225,7 @@ public:
 	*
 	*/
     basic_server_t(const std::string& laddr,std::size_t poll,std::size_t timeout)
-    	:_pos(0),_timeout(timeout)
+    	:_pos(0),_timeout(timeout),_run(false)
     {
     	//設置輪詢 響應服務器 差值
     	if(poll < 1)
@@ -242,7 +245,7 @@ public:
 	*
 	*/
     basic_server_t(const std::string& laddr,std::size_t poll,std::size_t timeout,boost::system::error_code& ec)
-    	:_pos(0),_timeout(timeout)
+    	:_pos(0),_timeout(timeout),_run(false)
     {
     	try
     	{
@@ -264,14 +267,20 @@ public:
     {
     	stop();
     }
+public:
     /**
 	*	\brief 停止 服務器 釋放所有資源
 	*
 	*/
     void stop()
     {
-    	//停止 監聽 服務器
-    	_service.stop();
+		boost::mutex::scoped_lock(_mutex);
+		if(!_run)
+		{
+			return;
+		}
+		_run = false;
+		//停止 監聽 服務器    	
     	if(_acceptor)
 		{
 			boost::system::error_code ec;
@@ -279,23 +288,85 @@ public:
 			_acceptor.reset();
 		}
 
+		if(_service)
+		{
+			_service->stop();
+			_service.reset();
+		}
+
     	//停止 響應服務器
-    	for(service_spt& service:_services)
+    	BOOST_FOREACH(service_spt& service,_services)
 		{
 			service->stop();
 		}
 		_services.clear();
+
+		if(_thread)
+		{
+			_thread->join();
+			_thread.reset();
+		}
     }
     /**
 	*	\brief 運行 服務器
+	*	\exception boost::system::system_error
 	*
 	*/
-    inline void run()
+    void run()
     {
-    	post_accept();
-        //KG_TRACE("work at "<<_acceptor->local_endpoint());
-        _service.run();
+		try
+		{
+			boost::mutex::scoped_lock(_mutex);
+			if(_run)
+			{
+				return;
+			}
+			post_accept();
+			_run = true;
+			_thread = boost::make_shared<thread_t>(boost::bind(&basic_server_t::run_thread,this,_service));
+		}
+		catch(const std::bad_alloc&)
+		{
+			BOOST_THROW_EXCEPTION(boost::system::system_error(KG_NET_BASIC_SERVER_CODE_BAD_ALLOC,basic_server_category::get()));
+		}
     }
+	/**
+	*	\brief 運行 服務器
+	*
+	*/
+    void run(boost::system::error_code& ec)
+	{
+		try
+		{
+			run();
+		}
+		catch(const boost::system::system_error& e)
+		{
+			ec = e.code();
+		}
+	}
+	/**
+	*	\brief 等待服務器停止
+	*
+	*/
+	void join()
+	{
+		_mutex.lock();
+		thread_spt thread = _thread;
+		_mutex.unlock();
+		if(thread)
+		{
+			thread->join();
+		}
+	}
+private:
+	bool _run;
+	boost::mutex _mutex;
+	thread_spt _thread;
+	void run_thread(io_service_spt service)
+	{
+        service->run();
+	}
 private:
     void post_accept()
     {
@@ -345,6 +416,11 @@ private:
 
     void post_accept_handler(const boost::system::error_code& ec,socket_spt sock,service_spt service)
     {
+		if(!_run)
+		{
+			return;
+		}
+
         post_accept();
         if(ec)
         {

@@ -110,13 +110,29 @@ public:
     }
 	/**
 	*	\brief 運行 服務器
+	*	\exception boost::system::system_error
 	*
 	*/
     inline void run()
     {
     	_s.run();
     }
-
+	/**
+	*	\brief 運行 服務器
+	*
+	*/
+    inline void run(boost::system::error_code& ec)
+    {
+    	_s.run(ec);
+    }
+	/**
+	*	\brief 等待服務器停止
+	*
+	*/
+	inline void join()
+	{
+		_s.join();
+	}
 public:
 	/**
 	*	\brief 定義 連接建立後 回調
